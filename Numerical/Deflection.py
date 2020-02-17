@@ -35,15 +35,15 @@ def Macauley(y):
     return y
 
 def v_prime(x):
-    v = -1/(E*Ixx)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2) + C1)
+    v = -1/(E*Izz)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2) + C1)
     return v
 
 def w_prime(x):
-    w = 1/(E*Iyy*(R1x/2*(Macauley(x-x1)**2) + R2x/2*(Macauley(x-x2)**2) - Px/2*Macauley(x-(x2+xa/2))**2 - Ax/2*Macauley(x-(x2-xa/2))**2 + R3x/2*(Macauley(x-x3)**2 + C1)
+    w = -1/(E*Iyy*(R1x/2*(Macauley(x-x1)**2) + R2x/2*(Macauley(x-x2)**2) - Px/2*Macauley(x-(x2+xa/2))**2 - Ax/2*Macauley(x-(x2-xa/2))**2 + R3x/2*(Macauley(x-x3)**2 + C1)
     return w
 
 def v(x):
-    v = -1/(E*Ixx)*(q_int + R1y/6*(Macauley(x-x1)**3) + R2y/6*(Macauley(x-x2)**3) - Py/6*Macauley(x-(x2+xa/2))**3 - Ay/6*Macauley(x-(x2-xa/2))**3 + R3y/6*(Macauley(x-x3)**3) + C1*x + C2)
+    v = -1/(E*Izz)*(q_int + R1y/6*(Macauley(x-x1)**3) + R2y/6*(Macauley(x-x2)**3) - Py/6*Macauley(x-(x2+xa/2))**3 - Ay/6*Macauley(x-(x2-xa/2))**3 + R3y/6*(Macauley(x-x3)**3) + C1*x + C2)
     return v
 
 def w(x):
