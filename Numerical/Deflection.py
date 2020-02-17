@@ -47,7 +47,7 @@ def Macauley(y):
     return y
 
 def v_prime(x):
-    v_prim = -1/(E*Ixx)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2)) + C1
+    v_prim = -1/(E*Izz)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2)) + C1
     return v_prim
 
 def w_prime(x):
