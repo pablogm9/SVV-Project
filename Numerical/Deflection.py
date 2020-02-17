@@ -13,7 +13,6 @@ x1 = 0.125
 x2 = 0.498
 x3 = 1.494
 La = 1.611
-x = 0
 dx = 0.01
 E = 1000
 Ixx = 10
@@ -23,9 +22,22 @@ R3y = 4
 Py = 5
 Mx = 10
 xa = 0.245
+Pz = 5
+R1z = 2
+R2z = 3
+R3z = 4
+Az = 2
+C1 = 2
+Iyy = 10
+x = 0
+Izz = 10
+Ay = 2
+C2 = 1
+C3 = 1
+C4 = 1
 
-v = []
-w = []
+v_tot = []
+w_tot = []
 
 q_int = 1
 
@@ -35,24 +47,30 @@ def Macauley(y):
     return y
 
 def v_prime(x):
-    v = -1/(E*Izz)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2) + C1)
-    return v
+    v_prim = -1/(E*Ixx)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2)) + C1
+    return v_prim
 
 def w_prime(x):
-    w = -1/(E*Iyy*(R1x/2*(Macauley(x-x1)**2) + R2x/2*(Macauley(x-x2)**2) - Px/2*Macauley(x-(x2+xa/2))**2 - Ax/2*Macauley(x-(x2-xa/2))**2 + R3x/2*(Macauley(x-x3)**2 + C1)
-    return w
+    w_prim = -1/(E*Iyy)*(R1z/2*(Macauley(x-x1)**2) + R2z/2*(Macauley(x-x2)**2) - Pz/2*Macauley(x-(x2+xa/2))**2 - Az/2*Macauley(x-(x2-xa/2))**2 + R3z/2*(Macauley(x-x3)**2)) + C1
+    return w_prim
+
 
 def v(x):
-    v = -1/(E*Izz)*(q_int + R1y/6*(Macauley(x-x1)**3) + R2y/6*(Macauley(x-x2)**3) - Py/6*Macauley(x-(x2+xa/2))**3 - Ay/6*Macauley(x-(x2-xa/2))**3 + R3y/6*(Macauley(x-x3)**3) + C1*x + C2)
+    v = -1/(E*Izz)*(q_int + R1y/6*(Macauley(x-x1)**3) + R2y/6*(Macauley(x-x2)**3) - Py/6*Macauley(x-(x2+xa/2))**3 - Ay/6*Macauley(x-(x2-xa/2))**3 + R3y/6*(Macauley(x-x3)**3)) + C1*x + C2
     return v
 
 def w(x):
-    w = -1/(E*Iyy*(R1x/6*(Macauley(x-x1)**3) + R2x/6*(Macauley(x-x2)**3) - Px/6*Macauley(x-(x2+xa/2))**3 - Ax/6*Macauley(x-(x2-xa/2))**3 + R3x/6*(Macauley(x-x3)**3) + C3*x + C4)
+    w = -1/(E*Iyy)*(R1z/6*(Macauley(x-x1)**3) + R2z/6*(Macauley(x-x2)**3) - Pz/6*Macauley(x-(x2+xa/2))**3 - Az/6*Macauley(x-(x2-xa/2))**3 + R3z/6*(Macauley(x-x3)**3)) + C3*x + C4
     return w
+
 while x<= La:
-    v.append(v(x))
-    w.append(w(x))
+    v_tot.append(v(x))
+    w_tot.append(w(x))
     x+= dx
 
-print(v)
+print(sum(v_tot))
+
+## Verification
+
+
 
