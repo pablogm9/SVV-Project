@@ -71,6 +71,13 @@ while x<= La:
 print(sum(v_tot))
 
 ## Verification
+## test Macauley
 
+#print(Macauley(x1+0.01-x1))
+#print(Macauley(x1-0.01-x1))
+#print(Macauley(x2+0.01-x2))
+#print(Macauley(x2-0.01-x2))
+#print(Macauley(x3+0.01-x3))
+#print(Macauley(x3-0.01-x3))
 
 
