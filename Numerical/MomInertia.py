@@ -29,33 +29,33 @@ ylist = []
 alpha = arctan(r/(ca-r))
 
 for i in range(1,5):
-    ztriangle = spacingtriangle * i * cos(alpha)
+    ztriangle = - spacingtriangle * i * cos(alpha)
     ytriangle = spacingtriangle * i * sin(alpha)
     zlist.append(ztriangle)
     ylist.append(ytriangle)
 
 # Coordinates for Circle Stiffeners
 for i in range(1,4):
-    zcircle = spacingtriangle * 5 * cos(alpha) + r * sin(i*pi/4)
+    zcircle = r * sin(i*pi/4)
     ycircle = r * cos(i*pi/4)
     zlist.append(zcircle)
     ylist.append(ycircle)
     
 # Coordinates for Triangle Stiffeners (Negative)
 for i in range(1,5):
-    ztriangle = spacingtriangle * cos(alpha) * (5 - i)
+    ztriangle = - spacingtriangle * cos(alpha) * (5 - i)
     ytriangle = - spacingtriangle * (5 - i) * sin(alpha)
     zlist.append(ztriangle)
     ylist.append(ytriangle)
 
 # Moment of Inertia Contribution from Stiffeners
 Izz_stlist = []
-for i in zlist:
+for i in ylist:
     Izz_st = A_st * i**2
     Izz_stlist.append(Izz_st)
 
 Iyy_stlist = []
-for j in ylist:
+for j in zlist:
     Iyy_st = A_st * j**2
     Iyy_stlist.append(Iyy_st)
 
@@ -96,3 +96,5 @@ Iyy_cs = Iyy_1 + 2 * Iyy_23 + Iyy_4
 # Total Moment of Inertia
 Izz = (Izz_stot + Izz_cs)*10**(-8) # in m^4
 Iyy = (Iyy_stot + Iyy_cs)*10**(-8) # in m^4
+
+print(Izz, Iyy)
