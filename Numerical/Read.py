@@ -8,7 +8,7 @@ import pandas as pd
 
 
 
-def get_data(aircraft, Ca, La)
+def get_data(aircraft, Ca, La):
 
     '''
     Reads the provided aerodynamic data and returns it in the shape of a numpy array.
