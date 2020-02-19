@@ -94,5 +94,5 @@ Izz_cs = Izz_1 + 2 * Izz_23 + Izz_4
 Iyy_cs = Iyy_1 + 2 * Iyy_23 + Iyy_4
 
 # Total Moment of Inertia
-Izz = Izz_stot + Izz_cs
-Iyy = Iyy_stot + Iyy_cs
+Izz = (Izz_stot + Izz_cs)*10**(-8) # in m^4
+Iyy = (Iyy_stot + Iyy_cs)*10**(-8) # in m^4
