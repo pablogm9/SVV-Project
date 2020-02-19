@@ -50,6 +50,10 @@ def stress_zz(z):
     s = -My*(x)/Iyy + Mx*y(z)/Ixx
     return s
 
+def stress_vm(x,y,z):
+    s_vm = (((sigma_xx(z) - sigma_yy(z))**2 + (sigma_zz - sigma_xx)**2 + 6*(Txy**2 + Tyz**2 + Txz**2))/2)**0.5
+    return s_vm
+
 s_xx = []
 s_yy = []
 s_zz = []
