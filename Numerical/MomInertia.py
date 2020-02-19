@@ -15,6 +15,7 @@ h_st = 1.3
 A_st = t_st * (w_st + h_st)
 t_sk = 0.11
 t_sp = 0.24
+ycentr = 0
 
 #Stiffener Spacing in the Triangle
 r = ha/2
@@ -65,16 +66,15 @@ Iyy_stot = sum(Iyy_stlist)
 # Moment of Inertia Contribution from Thin-Walled Cross-Section
 Izz_1 = (1/12) * t_sp * ha**3
 Iyy_1 = (1/12) * ha * t_sp**3
-J_1 = (1/12) * t_sp * ha * (t_sp**2 + ha**2)
-Izz_23 = (1/12) * t_sk * a**3 * (sin(alpha))**2
-Iyy_23 = (1/12) * t_sk * a**3 * (cos(alpha))**2
+Izz_23 = (1/12) * t_sk * a**3 * (sin(alpha))**2 + t_sk * a * (a/2 * sin(alpha))**2
+Iyy_23 = (1/12) * t_sk * a**3 * (cos(alpha))**2 + t_sk * a * (a/2 * cos(alpha))**2
 
 def fz(theta):
-    fz = t_sk * r * (r - r * cos(theta))**2
+    fz = t_sk * r**3 * (cos(theta))**2
     return fz
 
 def fy(theta):
-    fy = t_sk * r * (r * sin(theta))**2
+    fy = t_sk * r**3 * (sin(theta))**2
     return fy
 
 flist_z = []
