@@ -39,15 +39,15 @@ class Analytical_Int_1D:
         x_1 = (self.coords[1:])
         x_0 = (self.coords[:-1])
         if len(self.matrix[0]) == 4:
-            return sum((self.a*(x_1-x_0)**4)/4 + (self.b*(x_1-x_0)**3)/3 + (self.c*(x_1-x_0)**2)/2 + self.d*(x_1-x_0))
+            return sum((self.a*(x_1)**4)/4 + (self.b*(x_1)**3)/3 + (self.c*(x_1)**2)/2 + self.d*(x_1) - (self.a*(x_0)**4)/4 + (self.b*(x_0)**3)/3 + (self.c*(x_0)**2)/2 + self.d*(x_0))
         if len(self.matrix[0]) == 5:
-            return sum((self.a*(x_1-x_0)**5)/5 + (self.b*(x_1-x_0)**4)/4 + (self.c*(x_1-x_0)**3)/3 + (self.d*(x_1-x_0)**2)/2 + self.e(x_1-x_0))
+            return sum((self.a*(x_1)**5)/5 + (self.b*(x_1)**4)/4 + (self.c*(x_1)**3)/3 + (self.d*(x_1)**2)/2 + self.e(x_1)-(self.a*(x_0)**5)/5 + (self.b*(x_0)**4)/4 + (self.c*(x_0)**3)/3 + (self.d*(x_0)**2)/2 + self.e(x_0))
 
     def double_integrator(self):
         x_1 = (self.coords[1:])
         x_0 = (self.coords[:-1])
         self.e = (self.a*x_0**3) + (self.b*x_0**2) + (self.c*x_0) + self.d
-        return sum((self.a*.05*(x_1-x_0)**5) + ((self.b/12)*(x_1-x_0)**4) + ((self.c/6)*(x_1-x_0)**3) + ((self.d*0.5)*(x_1-x_0)**2) )
+        return sum((self.a*.05*(x_1)**5) + ((self.b/12)*(x_1)**4) + ((self.c/6)*(x_1)**3) + ((self.d*0.5)*(x_1)**2) - (self.a*.05*(x_0)**5) + ((self.b/12)*(x_0)**4) + ((self.c/6)*(x_0)**3) + ((self.d*0.5)*(x_0)**2))
     def quad_integrator(self):
         x_1 = (self.coords[1:])
         x_0 = (self.coords[:-1])
@@ -57,5 +57,5 @@ class Analytical_Int_1D:
         self.g = (self.a/20)*x_0**5 + (self.b/12)*x_0**4 + (self.c/6)*x_0**3 + (self.d/2)*x_0**2 + self.e*x_0 + self.f
         self.h = (self.a/120)*x_0**6  + (self.b/60)*x_0**5 + (self.c/24)*x_0**4 + (self.d/6)*x_0**3 + (self.e/2)*x_0**2 + self.f*x_0 + self.g
 
-        return sum((self.a/840)*(x_d)**7 + (self.b/360)*x_d**6 + (self.c/120)*x_d**5 + (self.d/24)*x_d**4)
-        # + (self.e / 6) * x_d ** 3 + (self.f / 2) * x_d ** 2 + self.g * x_d)
+        return sum(((self.a/840)*(x_1)**7 + (self.b/360)*x_1**6 + (self.c/120)*x_1**5 + (self.d/24)*x_1**4) - ((self.a/840)*(x_0)**7 + (self.b/360)*x_0**6 + (self.c/120)*x_0**5 + (self.d/24)*x_0**4))
+    #+ (self.d/24)*x_d**4 + (self.e / 6) * x_d ** 3 + (self.f / 2) * x_d ** 2 + self.g * x_d)
