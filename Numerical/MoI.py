@@ -21,7 +21,7 @@ nstiff = 11
 r = ha/2
 a = sqrt(r**2+(ca-r)**2)
 P = 2*a + pi*r
-spacingtriangle = P/nstiff
+space_st = P/nstiff
 
 # Coordinates for Stiffeners
 zlist = [r]
@@ -31,18 +31,18 @@ ylist = [0.0]
 alpha = arctan(r/(ca-r))
 print(alpha)
 for i in range(4):
-    ztriangle = - ca + r + spacingtriangle * (1/2 + i) * cos(alpha)
-    ytriangle = spacingtriangle * (1/2 + i) * sin(alpha)
+    ztriangle = - ca + r + space_st * (1/2 + i) * cos(alpha)
+    ytriangle = space_st * (1/2 + i) * sin(alpha)
     zlist.append(ztriangle)
     ylist.append(ytriangle)
 
 # Coordinates for Circle Stiffeners
-beta = spacingtriangle/r
+beta = space_st/r
 while beta < pi/2:
     zcircle = r * cos(beta)
     ycircle = r * sin(beta)
     
-    beta = beta + spacingtriangle/r
+    beta = beta + space_st/r
     
     zlist.append(zcircle)
     ylist.append(ycircle)
@@ -51,8 +51,8 @@ while beta < pi/2:
 
 # Coordinates for Triangle Stiffeners (Negative)
 for i in range(4):
-    ztriangle = - ca + r + spacingtriangle * cos(alpha) * (1/2 + i)
-    ytriangle = - spacingtriangle * (1/2 + i) * sin(alpha)
+    ztriangle = - ca + r + space_st * cos(alpha) * (1/2 + i)
+    ytriangle = - space_st * (1/2 + i) * sin(alpha)
     zlist.append(ztriangle)
     ylist.append(ytriangle)
 
