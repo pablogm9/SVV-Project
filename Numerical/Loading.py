@@ -132,13 +132,12 @@ def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,
 
 def moments(x):
     Mz = -D + R1y*Macaulay(x-x1) + R2y*Macaulay(x-x2) - Py*Macaulay(x-(x2+xa/2)) - Ay*Macaulay(x-(x2-xa/2)) + R3y*Macaulay(x-x3)
-    #signs switched around for Mz.....??
     My = -R1z*Macaulay(x-x1) + Pz*Macaulay(x-(x2+xa/2)) - R2z*Macaulay(x-x2) - R3z*Macaulay(x-x3)+ Az*Macaulay(x-(x2-xa/2))
-    T = -Td - (0-zshear)*R1y*Macaulay(x-x1)**0 - (0-zshear)*R2y*Macaulay(x-x2)**0 - (0-zshear)*R3y*Macaulay(x-x3)**0 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**0 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**0
+    T_total = -Td - (0-zshear)*R1y*Macaulay(x-x1)**0 - (0-zshear)*R2y*Macaulay(x-x2)**0 - (0-zshear)*R3y*Macaulay(x-x3)**0 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**0 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**0
     Sy = -S + R1y*Macaulay(x-x1)**0 + R2y*Macaulay(x-x2)**0 - Py*Macaulay(x-(x2+xa/2))**0 - Ay*Macaulay(x-(x2-xa/2))**0 + R3y*Macaulay(x-x3)**0
     Sz = -R1z*Macaulay(x-x1)**0 - R2z*Macaulay(x-x2)**0 + Pz*Macaulay(x-(x2+xa/2))**0 + Az*Macaulay(x-(x2-xa/2))**0 - R3z*Macaulay(x-x3)**0
     twist = 1/(G*J)*(-DTd - (0-zshear)*R1y*Macaulay(x-x1)**1 - (0-zshear)*R2y*Macaulay(x-x2)**1 - (0-zshear)*R3y*Macaulay(x-x3)**1 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**1 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**1 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**1 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**1 ) + C5
-    return(Mz,My,T,Sy,Sz,twist)
+    return(Mz,My,T_total,Sy,Sz,twist)
     #deflection functions as functions of x in both y and z directions (v in y direction, w in z direction)
 def v_prime(x):
     v_prim = -1/(E*Izz)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2)) + C1
