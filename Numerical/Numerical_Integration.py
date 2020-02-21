@@ -27,11 +27,11 @@ class Analytical_Int_1D:
             self.d = np.array([arr[3] for arr in matrix])
 
         if len(matrix[0]) == 5:
-            self.a = [arr[0] for arr in matrix]
-            self.b = [arr[1] for arr in matrix]
-            self.c = [arr[2] for arr in matrix]
-            self.d = [arr[3] for arr in matrix]
-            self.e = [arr[4] for arr in matrix]
+            self.a = np.array([arr[0] for arr in matrix])
+            self.b = np.array([arr[1] for arr in matrix])
+            self.c = np.array([arr[2] for arr in matrix])
+            self.d = np.array([arr[3] for arr in matrix])
+            self.e = np.array([arr[4] for arr in matrix])
         self.coords = coords
 
     #x_0 and x_1 are the two x values on the chord between which you are integrating
