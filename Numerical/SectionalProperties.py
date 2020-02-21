@@ -14,7 +14,7 @@ import matplotlib as plt
 
 
 
-def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff)
+def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
     
     
  
@@ -139,7 +139,7 @@ def get_J(G,ha,t_sk,w_st,t_sp,t_st,Ca):
     return J
 
 
-def get_SC(t_st,w_st,h_st,t_sk,t_sp,V,ha,Ca,Izz,):
+def get_SC(t_st,w_st,h_st,t_sk,t_sp,ha,Ca,Izz):
     
     r = ha/2
     dz = 1e-5

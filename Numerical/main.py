@@ -16,10 +16,10 @@ import pandas as pd
 import time
 
 
-import Interpolation as inter
-import Read
-import Integration
-import SectionalProperties as section
+from Numerical import Interpolation as inter
+from Numerical import Read
+from Numerical import Integration
+from Numerical import SectionalProperties as section
 
 # Start timer to measure runtime
 start_time = time.time()
@@ -151,7 +151,7 @@ for i in range(intermidiate_aerodata.shape[0]):
 # By doing this, the positive z-axis points towards the LE and starts
 # at the hinge line.
 
-new_nodes_z = -1*new_nodes_z * z_hingeline
+new_nodes_z = -1*new_nodes_z + z_hingeline
 
 
 # ----------------- RESULTANT LOAD CALCULATIONS -----------------
@@ -159,7 +159,7 @@ new_nodes_z = -1*new_nodes_z * z_hingeline
 
 centroids_spanwise = np.array([])
 resultant_forces = np.array([])
-fake_sc = -0.2 #[m]
+
 torques = np.array([])
 
 for i in range(new_aerodata.shape[1]):
@@ -176,7 +176,7 @@ for i in range(new_aerodata.shape[1]):
     z_centroid = numerator/denominator
     resultant = denominator
     
-    torque = abs(resultant)*(z_centroid-fake_sc)
+    torque = abs(resultant)*(z_centroid-z_sc)
     
     centroids_spanwise = np.append(centroids_spanwise,z_centroid)
     resultant_forces = np.append(resultant_forces,resultant)
