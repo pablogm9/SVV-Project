@@ -86,4 +86,8 @@ while theta>=-pi/2:
     ksi += qs2(theta)*dtheta*ds_*cos(theta)
     n += 1
     theta += -dtheta
+  
+Shear_centre = ksi
+
+print(Shear_centre)
     
