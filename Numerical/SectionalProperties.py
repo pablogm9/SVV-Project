@@ -30,7 +30,7 @@ def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
     
     # Coordinates for Triangle Stiffeners (Positive)
     alpha = arctan(r/(ca-r))
-    print(alpha)
+
     for i in range(4):
         ztriangle = - ca + r + space_st * (1/2 + i) * cos(alpha)
         ytriangle = space_st * (1/2 + i) * sin(alpha)
@@ -119,7 +119,7 @@ def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
     
     return Izz,Iyy
 
-def get_J(G,ha,t_sk,w_st,t_sp,t_st,Ca):
+def get_J(G,ha,t_sk,w_st,t_sp,t_st,ca):
     #calculation of J by evaluating shear flows
     #assumption - stiffeners included in analysis when integrating length over thickness
     #stiffeners assumed as horizontal stiffeners, vertical part is disregarded
@@ -139,7 +139,7 @@ def get_J(G,ha,t_sk,w_st,t_sp,t_st,Ca):
     return J
 
 
-def get_SC(t_st,w_st,h_st,t_sk,t_sp,ha,Ca,Izz):
+def get_SC(t_st,w_st,h_st,t_skin,t_spar,ha,ca,Izz):
     
     r = ha/2
     dz = 1e-5

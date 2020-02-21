@@ -183,8 +183,7 @@ for i in range(new_aerodata.shape[1]):
     torques = np.append(torques,torque)
 
 
-# ----------------- TORQUE CALCULATIONS -----------------
-# Loop through spanwise cross sections, calculate resultant force and centroid.
+
 
 
 
