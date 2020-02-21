@@ -120,6 +120,9 @@ def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff)
     return Izz,Iyy
 
 def get_J(G,ha,t_sk,w_st,t_sp,t_st,Ca):
+    #calculation of J by evaluating shear flows
+    #assumption - stiffeners included in analysis when integrating length over thickness
+    #stiffeners assumed as horizontal stiffeners, vertical part is disregarded
     A1=(ha/2)**2*pi/2
     A2=sqrt((ha/2)**2 + (ca-ha/2)**2)*ha/2
     randtorque=1
