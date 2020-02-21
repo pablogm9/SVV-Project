@@ -15,11 +15,11 @@ from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 import time
 
-
-from Numerical import Interpolation as inter
-from Numerical import Read
-from Numerical import Integration
-from Numerical import SectionalProperties as section
+import Matrix_equation
+import Interpolation as inter
+import Read
+import Integration
+import SectionalProperties as section
 
 # Start timer to measure runtime
 start_time = time.time()
@@ -37,6 +37,22 @@ A_st = t_st * (w_st + h_st) #[m^2]
 t_sk = 0.0011 #[m]
 t_sp = 0.0024 #[m]
 nstiff = 11 #[-]
+
+x1 = 0.125
+x2 = 0.498
+x3 = 1.494 #m
+xa = 0.245    #m
+x4 = x2-0.5*xa
+theta=30   #degrees 
+
+Py = 49200*sin(theta)
+Pz = 49200*cos(theta)   #N
+d1=0.00389   #m
+d2=0
+d3=0.01245    #m
+#zshear = -0.11   #z coordinate of shear centre in meters  ?????
+G = 28*10**9    #in Pa
+E=73.1*10**9     #in Pa
 
 aircraft = 'F100'
 
@@ -153,23 +169,52 @@ for i in range(intermidiate_aerodata.shape[0]):
 
 new_nodes_z = -1*new_nodes_z + z_hingeline
 
-
 # ----------------- RESULTANT LOAD CALCULATIONS -----------------
 # Loop through spanwise cross sections, calculate resultant force and centroid.
 
 centroids_spanwise = np.array([])
 resultant_forces = np.array([])
-
+aero_loads = np.zeros(new_aerodata.shape)
 torques = np.array([])
 
 for i in range(new_aerodata.shape[1]):
     
-    q = new_aerodata[:,i]
-    qz = np.multiply(q,new_nodes_z)
+    q = new_aerodata[:,i] # Pressure distribution
+
+    # ADD -- Convert q to force by multiplying by d_x,d_z (area in between spanwise crossections)
+
+    if i ==0: 
+        delta_span = new_nodes_x[i]
+    else:
+        delta_span = new_nodes_x[i] - new_nodes_x[i-1]
+      
+    torque = 0    
+    #resultant = 0
+        
+    for j in range(new_aerodata.shape[0]):
+        
+        if j == 0: 
+            delta_chord = abs(new_nodes_z[j]-z_hingeline)
+        else:
+            delta_chord = abs(new_nodes_z[j] - new_nodes_z[j-1])
+            
+        area = delta_span*delta_chord
+        
+        load = q[j]*area
+        aero_loads[j,i] = load
+        
+        torque_i = load*(new_nodes_z[j]-z_sc)
+        torque += torque_i
+        
+        #resultant += load
+    #new_nodes_zn = new_nodes_z[::-1]
+    resultant = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_z,aero_loads[:,i]), new_nodes_z).integrator()
+    resultant_forces = np.append(resultant_forces,resultant)
+
+    torques = np.append(torques,torque)
     
-    interpolants_q = inter.find_interpolants(new_nodes_z,q)
-    interpolants_qz = inter.find_interpolants(new_nodes_z,qz)
     
+    '''
     numerator = Integration.Analytical_Int_1D(interpolants_qz, new_nodes_z).integrator()
     denominator = Integration.Analytical_Int_1D(interpolants_q, new_nodes_z).integrator()
 
@@ -183,8 +228,43 @@ for i in range(new_aerodata.shape[1]):
     torques = np.append(torques,torque)
 
 
+    '''
+# ----------------- SOLVING SOE FOR REACTION FORCES -----------------
+#S is a single integration of the aerodynamic loading
 
 
+
+# S
+total_resultant = np.sum(resultant_forces) # S
+# D
+aero_moment_z = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x,resultant_forces),new_nodes_x).double_integrator()
+#Td is the last torque
+torque_L = torques[-1] 
+
+
+index_x1 = np.where(new_nodes_x>x1)[0][0]
+index_x2 = np.where(new_nodes_x>x2)[0][0]
+index_x3 = np.where(new_nodes_x>x3)[0][0]
+index_x4 = np.where(new_nodes_x>x4)[0][0]
+
+
+#DTd1
+aero_twist1 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x1],torques[0:index_x1]),new_nodes_x[0:index_x1]).double_integrator()
+#DTd1
+aero_twist2 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x2],torques[0:index_x2]),new_nodes_x[0:index_x2]).double_integrator()
+#DTd1
+aero_twist3 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x3],torques[0:index_x3]),new_nodes_x[0:index_x3]).double_integrator()
+#DTd1
+aero_twist4 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x4],torques[0:index_x4]),new_nodes_x[0:index_x4]).double_integrator()
+
+
+
+FI1 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x1],torques[0:index_x1]),new_nodes_x[0:index_x1]).quad_integrator()
+FI2 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x2],torques[0:index_x2]),new_nodes_x[0:index_x2]).quad_integrator()
+FI3 = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_x[0:index_x3],torques[0:index_x3]),new_nodes_x[0:index_x3]).quad_integrator()
+
+ 
+RES = Matrix_equation.matrix_solver(Ca,La,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant,aero_moment_z,torque_L,aero_twist1,aero_twist2,aero_twist3,aero_twist4,FI1,FI2,FI3)
 
 
 
