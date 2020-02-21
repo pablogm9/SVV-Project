@@ -220,8 +220,7 @@ def get_SC(t_st,w_st,h_st,t_sk,t_sp,V,ha,Ca,Izz,):
         n += 1
         theta += -dtheta
       
-    Shear_centre = ksi
-    
+    Shear_centre = -ksi + r     
     return Shear_centre
         
     
