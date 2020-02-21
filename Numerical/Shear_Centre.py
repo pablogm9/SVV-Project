@@ -18,6 +18,7 @@ s1 = sqrt(r**2 + (ca-r)**2)
 s2 = 2*r
 ds = 1e-5
 dtheta = 1e-5
+ds_ = 1e-2
 A = pi*r**2/2
 x_s = (ca-r)/s1
 
@@ -40,7 +41,6 @@ def qb4(s):
     return -t_skin/Izz*(-r*s+r/s1*s**2/2) + qb3(2*r) + qb2(-pi/2)
 
 twist_circ = 1/A_circ*( (-1/Izz*r**3*(sin(pi/2) - sin(-pi/2) + qb1(s1)*pi*r)) - (-r*1/Izz*(2*r)**2/6 + r/s1*(2*r)**3/6 + qb1(s1)*2*r))
-
 qs0_circ = twist_circ*(t_skin/(pi*r) + t_spar/(2*r))*2*A_circ   
 
 
@@ -67,7 +67,7 @@ n = 0
 ksi = 0
 
 while s<=s1:
-    ksi += qs1(s)*ds*(ca-r-x_s*n*ds)
+    ksi += qs1(s)*ds*(ca-r-x_s*n*ds)*ds_
     n += 1
     s += ds
 
@@ -75,7 +75,7 @@ s = 0
 n = 0
 
 while s<=s1:
-    ksi += qs4(s)*ds*x_s*n*ds
+    ksi += qs4(s)*ds*x_s*n*ds*ds_
     n += 1
     s += ds
 
@@ -83,6 +83,7 @@ theta = pi/2
 n = 0
 
 while theta>=-pi/2:
-    ksi += qs2(theta)*dtheta*cos(theta)
+    ksi += qs2(theta)*dtheta*ds_*cos(theta)
     n += 1
     theta += -dtheta
+    
