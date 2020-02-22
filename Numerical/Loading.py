@@ -8,7 +8,7 @@ Created on Mon Feb 17 14:56:32 2020
 from math import *
 import numpy as np
 from matplotlib import pyplot as plt
-def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,zshear, S,D, Td, DTd1,DTd2,DTd3,DTd4, FI1, FI2, FI3):
+def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,zshear, S,D, Td, DTd1,DTd2,DTd3, FI1, FI2, FI3):
     
     
     A1=pi/2*ha**2      #m^2
@@ -98,7 +98,7 @@ def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,
        -d1*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x1-(x2+xa/2))**3+ DTd1/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x1-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x1-(x2+xa/2))**1,            #w(x1) + twist(x1)*(ha/2) = -d1*sin(theta)
        Pz/(E*Iyy)*1/6*Macauley(x2-(x2+xa/2))**3+ DTd2/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x2-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x2-(x2+xa/2))**1,                           #w(x2) + twist(x2)*(ha/2) = 0
        -d3*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x3-(x2+xa/2))**3+ DTd3/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x3-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x3-(x2+xa/2))**1,            #w(x3) + twist(x3)*(ha/2) = -d3*sin(theta)
-       Pz/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2+xa/2))**3+ DTd4/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x2-xa/2-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x2-xa/2-(x2+xa/2))**1,       #w(x-xa/2)+twist(x-xa/2)*ha/2=0 at ACTUATOR 1
+       Pz/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2+xa/2))**3 ,       #w(x2-xa/2)=0 at ACTUATOR 1
        0]          #Ay - Aztan(30) = 0
     '''
     This Y vector includes all boundary conditions - RHS
@@ -117,7 +117,7 @@ def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,
                   [-ha/(2*G*J)*(0-zshear)*Macaulay(x1-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x1-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x1-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x1-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x1-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x1-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x1-(x2-xa/2))**1,   0,0,x1,1,1  ],
                   [-ha/(2*G*J)*(0-zshear)*Macaulay(x2-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x2-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x2-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x2-(x2-xa/2))**1,   0,0,x2,1,1  ],
                   [-ha/(2*G*J)*(0-zshear)*Macaulay(x3-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x3-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x3-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x3-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x3-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x3-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x3-(x2-xa/2))**1,   0,0,x3,1,1  ],
-                  [-ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1,   0,0,x2-xa/2,1,1 ],
+                  [0,0,0,  -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x3)**3),   0, 1/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3,   0,0,x2-xa/2,1,0],
                   [0,0,0, 0,0,0, 1,-tan(theta), 0,0,0,0,0]])
     
     #RES=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]
