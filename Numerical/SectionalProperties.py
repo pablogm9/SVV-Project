@@ -139,7 +139,7 @@ def get_J(G,ha,t_sk,w_st,t_sp,t_st,ca):
     return J
 
 
-def get_SC(t_st,w_st,h_st,t_skin,t_spar,ha,ca,Izz):
+def get_SC(t_skin,t_spar,ha,ca,Izz):
     
     r = ha/2
     dz = 1e-5
@@ -155,76 +155,86 @@ def get_SC(t_st,w_st,h_st,t_skin,t_spar,ha,ca,Izz):
     
     A_circ = r**2*pi/2
     A_triang = s1*r
-    B = t_st*(w_st + h_st)
+    
 
     
-    def qb1(s):
-        qb1 = -t_skin/Izz*(r/s1*s**2/2)
-        return qb1
-    
-    def qb2(theta):
-        qb2 = -t_skin/Izz*(r**2*cos(theta)) + qb1(s1)
-        return qb2
-    
+    def qb1(theta):
+        return t_skin/Izz*(r**2*-cos(theta))
+
+    def qb2(s):
+        return t_spar/Izz*s**2/2
+
     def qb3(s):
-        qb3 = -t_skin/Izz*(r*s-s**2/2) + qb1(s1)
-        return qb3
-    
+        return t_skin/Izz*(r*s - s**2/2*r/s1) - qb1(0) + qb2(r)
+
     def qb4(s):
-        return -t_skin/Izz*(-r*s+r/s1*s**2/2) + qb3(2*r) + qb2(-pi/2)
-    
-    twist_circ = 1/A_circ*( (-1/Izz*r**3*(sin(pi/2) - sin(-pi/2) + qb1(s1)*pi*r)) - (-r*1/Izz*(2*r)**2/6 + r/s1*(2*r)**3/6 + qb1(s1)*2*r))
-    qs0_circ = twist_circ*(t_skin/(pi*r) + t_spar/(2*r))*2*A_circ   
-    
-    
-    twist_triang = 1/2/A_triang*((1/Izz*(r/s1*s1**3/6 + (-r*(2*r)**2/2 + r/s1*(2*r)**3/6) + (-r*s1**2/2 + r/s1*s1**3/6))) + qb1(s1)*2*r + qb2(-pi/2)*s1 + qb3(2*r)*s1)
-    
-    qs0_triang = twist_triang*(t_skin/(2*s1) + t_spar/(2*r))*2*A_triang
-    
-    
+        return t_skin/Izz*(-s**2/2*r/s1) + qb3(s1)
+
+    def qb5(s):
+        return t_spar/Izz*(-r*s + s**2/2) + qb2(r)
+
+    def qb6(s):
+        return t_skin/Izz*(r**2*-cos(theta)) - qb1(0)
+
+    """
+    shears = []
+    s_tot = []
+    s = 0
+
+    while s<=s1:
+        shears.append(qb4(s))
+        s_tot.append(s)
+        s += ds
+
+    plt.pyplot.plot(s_tot, shears)
+    """
+
+    qs0_circ = -(1/Izz*(-r**3*sin(pi/2) - r**3/6 - (-r**3/2 + r**3/6) + (-r**3*sin(-pi/2))) - qb2(r)*r/t_spar - qb1(0)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
+    qs0_triang = -(1/Izz*((r**3/2 - r**4/6/s1) + -r**4/6/s1 + r**3/6 + (-r**3/2 + r**3/6)) - qb1(0)*s1/t_skin + qb2(r)*s1/t_spar + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
+
     def qs1(s):
-        return qb1(s) + qs0_triang
-    
+        return qb1(s) + qs0_circ
+
     def qs2(s):
-        return qb2(s) + qs0_circ
-    
+        return qb2(s) - qs0_circ + qs0_triang
+
     def qs3(s):
-        return qb3(s) + qs0_triang + qs0_circ
-    
+        return qb3(s) + qs0_triang
+
     def qs4(s):
         return qb4(s) + qs0_triang
-    
-    
+
+    def qs5(s):
+        return qb5(s) - qs0_circ + qs0_triang
+
+    def qs6(s):
+        return qb6(s) + qs0_circ
+
+    shears = []
+    s_tot = []
     s = 0
-    n = 0
     ksi = 0
-    
     while s<=s1:
-        ksi += qs1(s)*ds*(ca-r-x_s*n*ds)*ds_
-        n += 1
+        ksi += r*(ca-r)/s1*ds*qs3(s)
         s += ds
-    
+
     s = 0
-    n = 0
-    
     while s<=s1:
-        ksi += qs4(s)*ds*x_s*n*ds*ds_
-        n += 1
+        ksi += r*(ca-r)/s1*ds*qs4(s)
         s += ds
-    
-    theta = pi/2
-    n = 0
-    
-    while theta>=-pi/2:
-        ksi += qs2(theta)*dtheta*ds_*cos(theta)
-        n += 1
-        theta += -dtheta
-      
-    Shear_centre = ksi + r     
-    return Shear_centre
-        
-    
-    
+
+    theta = 0
+
+    while theta<=pi/2:
+        ksi += -r*qs1(theta)*dtheta*r
+        theta += dtheta
+
+    theta = -pi/2
+
+    while theta<=0:
+        ksi += -r*qs1(theta)*dtheta*r
+        theta += dtheta    
+    return -ksi
     
     
     
