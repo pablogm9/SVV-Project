@@ -32,6 +32,7 @@ class Analytical_Int_1D:
             self.c = np.array([arr[2] for arr in matrix])
             self.d = np.array([arr[3] for arr in matrix])
             self.e = np.array([arr[4] for arr in matrix])
+        coords+=0.0805
         self.coords = np.array(coords)
 
     #x_0 and x_1 are the two x values on the chord between which you are integrating
