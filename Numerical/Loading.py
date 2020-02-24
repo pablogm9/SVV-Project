@@ -158,19 +158,19 @@ def twist(x,G,J,DTd,R1y,R2y,R3y,Py,Pz,Ay,Az,C5):
     #deflection functions as functions of x in both y and z directions (v in y direction, w in z direction)
 
 
-def v_prime(x):
+def v_prime(x,E,Izz,q_int,R1y,R2y,R3y,Py,Ay,C1):
     v_prim = -1/(E*Izz)*(q_int + R1y/2*(Macauley(x-x1)**2) + R2y/2*(Macauley(x-x2)**2) - Py/2*Macauley(x-(x2+xa/2))**2 - Ay/2*Macauley(x-(x2-xa/2))**2 + R3y/2*(Macauley(x-x3)**2)) + C1
     return v_prim
 
-def w_prime(x):
-    w_prim = -1/(E*Iyy)*(R1z/2*(Macauley(x-x1)**2) + R2z/2*(Macauley(x-x2)**2) - Pz/2*Macauley(x-(x2+xa/2))**2 - Az/2*Macauley(x-(x2-xa/2))**2 + R3z/2*(Macauley(x-x3)**2)) + C1
+def w_prime(x,E,Iyy,R1z,R2z,R3z,Pz,Az,C3):
+    w_prim = -1/(E*Iyy)*(R1z/2*(Macauley(x-x1)**2) + R2z/2*(Macauley(x-x2)**2) - Pz/2*Macauley(x-(x2+xa/2))**2 - Az/2*Macauley(x-(x2-xa/2))**2 + R3z/2*(Macauley(x-x3)**2)) + C3
     return w_prim
 
-def v(x):
+def v(x,E,Izz,q_int,R1y,R2y,R3y,Py,Ay, C1,C2):
     v = -1/(E*Izz)*(q_int + R1y/6*(Macauley(x-x1)**3) + R2y/6*(Macauley(x-x2)**3) - Py/6*Macauley(x-(x2+xa/2))**3 - Ay/6*Macauley(x-(x2-xa/2))**3 + R3y/6*(Macauley(x-x3)**3)) + C1*x + C2
     return v
 
-def w(x):
+def w(x,E,Iyy,R1z,R2z,R3z,Pz,Az,C3,C4):
     w = -1/(E*Iyy)*(R1z/6*(Macauley(x-x1)**3) + R2z/6*(Macauley(x-x2)**3) - Pz/6*Macauley(x-(x2+xa/2))**3 - Az/6*Macauley(x-(x2-xa/2))**3 + R3z/6*(Macauley(x-x3)**3)) + C3*x + C4
     return w   
 
