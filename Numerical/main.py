@@ -405,7 +405,7 @@ for i in range(new_aerodata.shape[1]):
     normal_stresses_crosssection = np.array([])
     
     V_y = V_y[i]
-    V_z = V_z[i]
+    W_z = W_z[i]
     T_x = T_x[i]
     
     
