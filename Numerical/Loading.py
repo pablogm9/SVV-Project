@@ -128,23 +128,31 @@ def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,
 
 "Moment around z,y axis as a function of x, as well as torque, shear forces and twist angle as functions of x"
 
-
-def moments(x,new_nodes_x,torques, RES):
     
     '''
     Torques is the list of torques caused by the aerodynamic loading at each cross section
     '''
+index = np.where(new_nodes_x>x)[0][0]
+Td = torques[0:index][-1]
     
-    index = np.where(new_nodes_x>x)[0][0]
-    Td = torques[0:index][-1]
-    
+def moment_z(x,R1y,R2y,R3y,Ay):
     Mz = -D + R1y*Macaulay(x-x1) + R2y*Macaulay(x-x2) - Py*Macaulay(x-(x2+xa/2)) - Ay*Macaulay(x-(x2-xa/2)) + R3y*Macaulay(x-x3)
+    return(Mz)
+def moment_y(x,R1z,R2z,R3z,Az,Pz):  
     My = -R1z*Macaulay(x-x1) + Pz*Macaulay(x-(x2+xa/2)) - R2z*Macaulay(x-x2) - R3z*Macaulay(x-x3)+ Az*Macaulay(x-(x2-xa/2))
-    T_total = -Td - (0-zshear)*R1y*Macaulay(x-x1)**0 - (0-zshear)*R2y*Macaulay(x-x2)**0 - (0-zshear)*R3y*Macaulay(x-x3)**0 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**0 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**0
+    return(My)
+def torque_x(x,Td,zshear,R1y,R2y,R3y,Ay,Az,Py,Pz):
+    T = -Td - (0-zshear)*R1y*Macaulay(x-x1)**0 - (0-zshear)*R2y*Macaulay(x-x2)**0 - (0-zshear)*R3y*Macaulay(x-x3)**0 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**0 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**0 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**0
+    return(T)
+def shear_y(x,R1y,R2y,R3y,Ay,Py,S):
     Sy = -S + R1y*Macaulay(x-x1)**0 + R2y*Macaulay(x-x2)**0 - Py*Macaulay(x-(x2+xa/2))**0 - Ay*Macaulay(x-(x2-xa/2))**0 + R3y*Macaulay(x-x3)**0
+    return(Sy)
+def shear_z(z,R1z,R2z,R3z,Az,Pz):
     Sz = -R1z*Macaulay(x-x1)**0 - R2z*Macaulay(x-x2)**0 + Pz*Macaulay(x-(x2+xa/2))**0 + Az*Macaulay(x-(x2-xa/2))**0 - R3z*Macaulay(x-x3)**0
+    return(Sz)
+def twist(x,G,J,DTd,R1y,R2y,R3y,Py,Pz,Ay,Az,C5):
     twist = 1/(G*J)*(-DTd - (0-zshear)*R1y*Macaulay(x-x1)**1 - (0-zshear)*R2y*Macaulay(x-x2)**1 - (0-zshear)*R3y*Macaulay(x-x3)**1 + (0-zshear)*Py*Macaulay(x-(x2+xa/2))**1 - (ha/2)*Pz*Macaulay(x-(x2+xa/2))**1 - (ha/2)*Az*Macaulay(x-(x2-xa/2))**1 + (0-zshear)*Ay*Macaulay(x-(x2-xa/2))**1 ) + C5
-    return(Mz,My,T_total,Sy,Sz,twist)
+    return(Mz,My,T,Sy,Sz,twist)
     #deflection functions as functions of x in both y and z directions (v in y direction, w in z direction)
 
 
