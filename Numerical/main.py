@@ -44,7 +44,7 @@ x2 = 0.498
 x3 = 1.494 #m
 xa = 0.245    #m
 x4 = x2-0.5*xa
-theta=30   #degrees 
+theta=radians(30)   #degrees 
 
 
 Py = 49200*sin(theta)
@@ -61,7 +61,7 @@ aircraft = 'F100'
 
 # ----------------- SECTIONAL PROPERTIES  -----------------
 
-Izz, Iyy = section.get_MoI(ha,Ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff) # Moments of Inertia
+Izz, Iyy, z_centroid = section.get_MoI(ha,Ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff) # Moments of Inertia
 z_sc = section.get_SC(t_sk, t_sp, ha, Ca, Izz) # Z-location of shear center
 J = section.get_J(G, ha, t_sk, w_st, t_sp, t_st, Ca)
 
@@ -168,6 +168,8 @@ for i in range(intermidiate_aerodata.shape[0]):
 
 new_nodes_z = -1*new_nodes_z + z_hingeline
 
+
+
 # ----------------- RESULTANT LOAD CALCULATIONS -----------------
 # Loop through spanwise cross sections, calculate resultant force and centroid.
 
@@ -206,7 +208,7 @@ for i in range(new_aerodata.shape[1]):
         torque += torque_i
         
         resultant += load
-    #new_nodes_zn = new_nodes_z[::-1]
+        
     #resultant = Integration.Analytical_Int_1D(inter.find_interpolants(new_nodes_z,aero_loads[:,i]), new_nodes_z).integrator()
     resultant_forces = np.append(resultant_forces,resultant)
     torques = np.append(torques,torque)
@@ -294,6 +296,16 @@ C4 = RES[11]
 C5 = RES[12]
 
 
+
+# ----------------- COORD. SYSTEM ADJUSTMENTS -----------------
+# Flip z-axis direction + translate to match chosen coordinate system 
+# By doing this, the positive z-axis points towards the LE and starts
+# at the hinge line.
+
+#new_nodes_z = -1*new_nodes_z + z_hingeline
+
+
+
 # ----------------- COMPUTE MOMENTS AND DEFLECTIONS AS A 'FUNCTION' OF X -----------------
 
 
@@ -307,6 +319,7 @@ V_y_prime = np.array([])
 W_z = np.array([])
 W_z_prime = np.array([])
 twist = np.array([])
+
 
 
 for i in range(new_aerodata.shape[1]):
@@ -354,12 +367,87 @@ for i in range(new_aerodata.shape[1]):
 
 
 
+
+# ----------------- STRESS CALCULATIONS -----------------
+
+# Get discretization of cross section -- (z,y) coordiantes of points
+circle1,circle2,spar1,spar2,top,bottom = section.discretize_crosssection(10000)
+
+circle_1_z = circle1[0]
+circle_1_y = circle1[1]
+
+circle_2_z = circle2[0]
+circle_2_y = circle2[1]
+
+spar_1_z = spar1[0]
+spar_1_y = spar1[1]
+
+spar_2_z = spar2[0]
+spar_2_y = spar2[1]
+
+top_z = top[0]
+top_y = top[1]
+
+bottom_z = bottom[0]
+bottom_y = bottom[1]
+
+crosssection_z = np.concatenate((circle_1_z,spar_1_z,top_z,bottom_z,spar_2_z,circle_2_z))
+crosssection_y = np.concatenate((circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,circle_2_y))
+
+
+# Get shear flows at each points
+q_circle1,q_spar1,q_top,q_bottom,q_spar2,q_circle2 = section.get_shearflows()
+
+normal_stresses = np.array([])
+
+for i in range(new_aerodata.shape[1]):
+    
+    normal_stresses_crosssection = np.array([])
+    
+    V_y = V_y[i]
+    V_z = V_z[i]
+    T_x = T_x[i]
+    
+    
+    for j in range(len(crosssection_z)):
+        
+        z = crosssection_z[j]
+        y = crosssection_y[j]
+        
+        sigma_xx = M_z[i]*y/Izz + M_y[i]*(z-z_centroid)/Iyy
+        
+        normal_stresses_crosssection = np.append(normal_stresses_crosssection,sigma_xx)
+        
+
+        
+        
+        
+      
+    normal_stresses = np.append(normal_stresses,normal_stresses_crosssection)        
+       
+    
+
+# ----------------- PLOT CROSS-SECTION -----------------
+'''
+plt.plot(circle_z,circle_y,'b')
+plt.plot(spar_z,spar_y,'b')
+plt.plot(top_z,top_y,'b')
+plt.plot(bottom_z,bottom_y,'b')
+
+plt.axhline(0,color='red',linewidth=1) # x = 0
+plt.axvline(0,color='red',linewidth=1) # y = 0
+
+plt.xlim(0.1,-0.45)
+plt.ylim(-0.1,0.1)
+plt.show()
+
+
+
 # Print runtime
 print('Runtime: %f seconds' % (time.time()-start_time))
 
+'''
 
-plt.plot(new_nodes_x,V_y)
-plt.show()
 
 
 
