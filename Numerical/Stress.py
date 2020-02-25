@@ -46,18 +46,22 @@ for i in range(new_aerodata.shape[1]):
         #condition (j<5000 etc.) to make sure that calculations are made in the correct part of the aileron
         #shear flow array must match with a coordinate (yz plane) arrays -  z = crosssection_z[j] and y = crosssection_y[j]
         if j<5000:
-            tau = (q_circle1 + q_circle0)/tsk)
+            tau = (q_circle1[j] + q_circle0)/tsk   #section 1
         if j>5000 and j<10000:
-            tau = (q_spar1 - q_circle0 + q_triangle0)/tsp)
-#.......
-            #......
+            tau = (q_spar1[j] - q_circle0 + q_triangle0)/tsp   #section 2
+        if j>1000:
+            tau = (q_top[j] + q_triangle0)/tsk   #section3
+        if j>10000:
+            tau = (q_bottom[j] + q_triangle0)/tsk   #section 4
+        if j>10000:
+            tau = (q_spar2[j - q_circle0 + q_triangle0)/tsp   #section 5
         if j>100000:
-            tau = (q_circle2 + q_circle0)/tsk
+            tau = (q_circle2 + q_circle0)/tsk                   #section 6
         #shear stress is due to both shear forces Vy and Vz, which are included in q_circle and q_spar etc. arrays
         #..and due to torque, which adds q_circle0 and/or q_triangle0 contributions
         
         shear_stresses_crosssection = np.append(shear_stresses_crosssection,tau)
-        von_Mises = np.append(von_Mises,sqrt(sigma_xx**2 + 3*tau**2))
+        von_Mises_crosssection=np.append(von_Mises_crosssection,sqrt(sigma_xx**2 + 3*tau**2))
 
 
 
