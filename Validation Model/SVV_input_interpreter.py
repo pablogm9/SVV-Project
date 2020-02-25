@@ -191,6 +191,16 @@ ax.grid()
 #for ribs for each case do that for LE AND TE sets
 #compare stresses at the ribs between the numerical values
 #This should be the node positions AFTER the bending force is applied
+
+aileron_coords = aileron_coords.set_index('label')
+#Coordinates used by the numerical that are also used by the validation model
+riba_coords = aileron_coords.iloc[coordinates_riba]
+ribb_coords = aileron_coords.iloc[coordinates_ribb]
+ribc_coords = aileron_coords.iloc[coordinates_ribc]
+ribd_coords = aileron_coords.iloc[coordinates_ribd]
+
+
+#Here is where you input the data the numerical model creates
 Numer_model_def_bending = {'x':[0,0,0,0,0], 'y':[0,0,0,0,0], 'z': [0,0,0,0]}
 Numer_model_def_JamBent = {'x':[0,0,0,0,0], 'y':[0,0,0,0,0], 'z': [0,0,0,0]}
 Numer_model_def_JamStraight = {'x':[0,0,0,0,0], 'y':[0,0,0,0,0], 'z': [0,0,0,0]}
@@ -225,32 +235,50 @@ Numer_model_JamStraight_ribd_stress = {'Von_Mises_ribd' :[0,0,0,0]}
 Numer_model_JamStraight_ribd_stress_df = pd.DataFrame(Numer_model_JamStraight_ribd_stress, columns = ['Von_Mises_ribd'])
 
 #For error calculations
-#Bending
-# deformation_bending['Deformation Error x'] = (deformation_bending['x']-Numer_model_def_bending['x'])/(deformation_bending['x'])
-# deformation_bending['Deformation Error y'] = (deformation_bending['y']-Numer_model_def_bending['y'])/(deformation_bending['y'])
-# deformation_bending['Deformation Error z'] = (deformation_bending['z']-Numer_model_def_bending['z'])/(deformation_bending['z'])
-#
-#
-#
-#
-# #JamBent
-# Jam_Bent_deformation['Deformation Error x'] = (Jam_Bent_deformation['x']-Numer_model_def_JamBent['x'])/(Jam_Bent_deformation['x'])
-# Jam_Bent_deformation['Deformation Error y'] = (Jam_Bent_deformation['y']-Numer_model_def_JamBent['y'])/(Jam_Bent_deformation['y'])
-# Jam_Bent_deformation['Deformation Error z'] = (Jam_Bent_deformation['z']-Numer_model_def_JamBent['z'])/(Jam_Bent_deformation['z'])
-#
-#
-#
-# #JamStraight
-# Jam_Straight_deformation['Deformation Error x'] = (Jam_Straight_deformation['x']-Numer_model_def_JamStraight['x'])/(Jam_Straight_deformation['x'])
-# Jam_Straight_deformation['Deformation Error y'] = (Jam_Straight_deformation['y']-Numer_model_def_JamStraight['y'])/(Jam_Straight_deformation['y'])
-# Jam_Straight_deformation['Deformation Error z'] = (Jam_Straight_deformation['z']-Numer_model_def_JamStraight['z'])/(Jam_Straight_deformation['z'])
+#------------------------------------DEFORMATION ERROR--------------------------------
+#Bending Deformation Error
+deformation_bending['Deformation Error x'] = (deformation_bending['x']-Numer_model_def_bending['x'])/(deformation_bending['x'])
+deformation_bending['Deformation Error y'] = (deformation_bending['y']-Numer_model_def_bending['y'])/(deformation_bending['y'])
+deformation_bending['Deformation Error z'] = (deformation_bending['z']-Numer_model_def_bending['z'])/(deformation_bending['z'])
 
-aileron_coords = aileron_coords.set_index('label')
 
-riba_coords = aileron_coords.iloc[coordinates_riba]
-ribb_coords = aileron_coords.iloc[coordinates_ribb]
-ribc_coords = aileron_coords.iloc[coordinates_ribc]
-ribd_coords = aileron_coords.iloc[coordinates_ribd]
+
+
+#JamBent Deformation Error
+Jam_Bent_deformation['Deformation Error x'] = (Jam_Bent_deformation['x']-Numer_model_def_JamBent['x'])/(Jam_Bent_deformation['x'])
+Jam_Bent_deformation['Deformation Error y'] = (Jam_Bent_deformation['y']-Numer_model_def_JamBent['y'])/(Jam_Bent_deformation['y'])
+Jam_Bent_deformation['Deformation Error z'] = (Jam_Bent_deformation['z']-Numer_model_def_JamBent['z'])/(Jam_Bent_deformation['z'])
+
+
+
+#JamStraight Deformation Error
+Jam_Straight_deformation['Deformation Error x'] = (Jam_Straight_deformation['x']-Numer_model_def_JamStraight['x'])/(Jam_Straight_deformation['x'])
+Jam_Straight_deformation['Deformation Error y'] = (Jam_Straight_deformation['y']-Numer_model_def_JamStraight['y'])/(Jam_Straight_deformation['y'])
+Jam_Straight_deformation['Deformation Error z'] = (Jam_Straight_deformation['z']-Numer_model_def_JamStraight['z'])/(Jam_Straight_deformation['z'])
+
+#--------------------------------------STRESS ERROR---------------------------------------
+#Bending Stress Error
+Bending_VMstresses_riba['VM Stress Error A'] = (Bending_VMstresses_riba['VM_AV']-Numer_model_bending_riba_stress_df['Von_Mises_riba'])/Bending_VMstresses_riba['VM_AV']
+Bending_VMstresses_ribb['VM Stress Error B'] = (Bending_VMstresses_ribb['VM_AV']-Numer_model_bending_ribb_stress_df['Von_Mises_ribb'])/Bending_VMstresses_ribb['VM_AV']
+Bending_VMstresses_ribc['VM Stress Error C'] = (Bending_VMstresses_ribc['VM_AV']-Numer_model_bending_ribc_stress_df['Von_Mises_ribc'])/Bending_VMstresses_ribc['VM_AV']
+Bending_VMstresses_ribd['VM Stress Error D'] = (Bending_VMstresses_ribd['VM_AV']-Numer_model_bending_ribd_stress_df['Von_Mises_ribd'])/Bending_VMstresses_ribd['VM_AV']
+
+
+#JamBent Error
+JamBent_VMstresses_riba['VM Stress Error A'] = (JamBent_VMstresses_riba['VM_AV']-Numer_model_JamBent_riba_stress_df['Von_Mises_riba'])/JamBent_VMstresses_riba['VM_AV']
+JamBent_VMstresses_ribb['VM Stress Error B'] = (JamBent_VMstresses_ribb['VM_AV']-Numer_model_JamBent_ribb_stress_df['Von_Mises_ribb'])/JamBent_VMstresses_ribb['VM_AV']
+JamBent_VMstresses_ribc['VM Stress Error C'] = (JamBent_VMstresses_ribc['VM_AV']-Numer_model_JamBent_ribc_stress_df['Von_Mises_ribc'])/JamBent_VMstresses_ribc['VM_AV']
+JamBent_VMstresses_ribd['VM Stress Error D'] = (JamBent_VMstresses_ribd['VM_AV']-Numer_model_JamBent_ribd_stress_df['Von_Mises_ribd'])/JamBent_VMstresses_ribd['VM_AV']
+
+
+#JamStraight Error
+JamStraight_VMstresses_riba['VM Stress Error A'] = (JamStraight_VMstresses_riba['VM_AV']-Numer_model_JamStraight_riba_stress_df['Von_Mises_riba'])/JamStraight_VMstresses_riba['VM_AV']
+JamStraight_VMstresses_ribb['VM Stress Error B'] = (JamStraight_VMstresses_ribb['VM_AV']-Numer_model_JamStraight_ribb_stress_df['Von_Mises_ribb'])/JamStraight_VMstresses_ribb['VM_AV']
+JamStraight_VMstresses_ribc['VM Stress Error C'] = (JamStraight_VMstresses_ribc['VM_AV']-Numer_model_JamStraight_ribc_stress_df['Von_Mises_ribc'])/JamStraight_VMstresses_ribc['VM_AV']
+JamStraight_VMstresses_ribd['VM Stress Error D'] = (JamStraight_VMstresses_ribd['VM_AV']-Numer_model_JamStraight_ribd_stress_df['Von_Mises_ribd'])/JamStraight_VMstresses_ribd['VM_AV']
+
+
+
 
 
 
