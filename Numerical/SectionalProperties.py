@@ -11,7 +11,7 @@ from numpy import cos,sin,pi,sqrt, arctan, arange,matrix,pi,linspace,array,appen
 from numpy.linalg import solve
 from math import *
 import matplotlib as plt
-
+import ShearIntegrator as itg
 
 
 def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
@@ -145,9 +145,9 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     
     s1 = sqrt(r**2 + (ca-r)**2)
     s2 = 2*r
-    ds = 1e-5
-    dtheta = 1e-5
-    ds_ = 1e-2
+    ds = s1/1e3
+    dtheta = pi/2/1e3
+    dr = r/1e3
     A = pi*r**2/2
     x_s = (ca-r)/s1
     
@@ -160,22 +160,22 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
 
     def qb1(theta):     # Shear Flow open section top circular
         return itg.integral_circ(0, theta)
-
+    
     def qb2(s):     # Spar Top 
         return itg.integral_spar(0, s)
-
+    
     def qb3(s):     # Triangular part top
         return  itg.integral_triang(0, s) + qb1(pi/2) + qb2(r)
-
+    
     def qb4(s):     # Triangular part bottom
         return  itg.integral_triang2(0, s) + qb3(s1)
-
+    
     def qb5(s):     # Spar bottom
         return  itg.integral_spar2(0, r) + qb2(r)
-
+    
     def qb6(theta):     # Circular part bottom
         return  itg.integral_circ(-pi/2, theta) + qb1(pi/2)
-
+    
     """
     shears = []
     s_tot = []
@@ -188,28 +188,28 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     """
     qs0_circ = -((itg.second_integral_circ(0, pi/2)/t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
     qs0_triang = -(itg.second_integral_triang(0, s1) + itg.second_integral_triang2(0, s1) + itg.second_integral_spar(0, r) + itg.second_integral_spar2(0, r) + (qb1(pi/2) + qb2(r))*s1/t_skin + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
-
-
-
+    
+    
+    
     def qs1(s):
         return qb1(s) + qs0_circ
-
+    
     def qs2(s):
         return qb2(s) - qs0_circ + qs0_triang
-
+    
     def qs3(s):
         return qb3(s) + qs0_triang
-
+    
     def qs4(s):
         return qb4(s) + qs0_triang
-
+    
     def qs5(s):
         return qb5(s) - qs0_circ + qs0_triang
-
+    
     def qs6(s):
         return qb6(s) + qs0_circ
-
-
+    
+    
     shears1 = []
     thetas1 = []
     theta = 0
@@ -217,16 +217,16 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         shears1.append(qs1(theta))
         thetas1.append(theta)
         theta += dtheta
-
+    
     shears6 = []
     thetas6 = []
     theta = -pi/2
-
+    
     while theta<=0:
         shears6.append(qs6(theta))
         thetas6.append(theta + pi/2)
         theta += dtheta
-
+    
     shears2 = []
     thetas2 = []
     s = 0
@@ -234,7 +234,7 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         shears2.append(qs2(s))
         thetas2.append(s)
         s += dr
-
+    
     shears5 = []
     thetas5 = []
     s = 0
@@ -242,7 +242,7 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         shears5.append(qs5(s))
         thetas5.append(s)
         s += dr
-
+    
     shears3 = []
     thetas3 = []
     s = 0
@@ -250,7 +250,7 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         shears3.append(qs3(s))
         thetas3.append(s)
         s += ds
-
+    
     shears4 = []
     thetas4 = []
     s = 0
@@ -258,18 +258,19 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         shears4.append(qs4(s))
         thetas4.append(s)
         s += ds
-
-    plt.pyplot.plot(thetas1, shears1)
-    plt.pyplot.plot(thetas6, shears6)
+        
+    #plt.pyplot.plot(thetas1, shears1)
+    #plt.pyplot.plot(thetas6, shears6)
     #plt.pyplot.plot(thetas2, shears2)
     #plt.pyplot.plot(thetas5, shears5)
     #plt.pyplot.plot(thetas3, shears3)
     #plt.pyplot.plot(thetas4, shears4)
-
+    
     ksi = 0
-    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)*s1*2
-    ksi += r*sum(shears1)/len(shears1)*pi*r   
-    return -ksi
+    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)*s1
+    ksi += r*(ca-r)/-s1*sum(shears4)/len(shears4)*s1
+    ksi += r*sum(shears1)/len(shears1)*pi*r  
+    return ksi
     
     
 def discretize_crosssection(n):
@@ -571,6 +572,7 @@ def get_shearflows():
     
 
     return qsc1,qsp1,qtop,qbot,qsp2,qsc2
+
 
 
 
