@@ -76,6 +76,7 @@ aircraft = 'F100'
 
 Izz, Iyy, z_centroid = section.get_MoI(ha,Ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff) # Moments of Inertia
 z_sc = section.get_SC(t_sk, t_sp, ha, Ca, Izz) # Z-location of shear center
+z_sc = -0.0846 + ha/2
 J = section.get_J(G, ha, t_sk, w_st, t_sp, t_st, Ca)
 
 
@@ -98,7 +99,7 @@ original_shape = original_aerodata.shape # Shape of data in the form (81,41)
 # Obtain preliminary values for interpolation
 
 # Desired resolutions, in [mm]
-r_span = 5
+r_span = 2
 r_chord = 5
 
 # Get value of n for both chord and span (= number of nodes - 1)
@@ -214,6 +215,7 @@ resultant_forces = np.array([])
 
 # Torque at each spanwise crosssection
 torques = np.array([])
+#torques2=np.array([])
 
 # Aerodynamic force generated at each point
 aero_loads = np.zeros(new_aerodata.shape)
@@ -261,7 +263,10 @@ for i in range(new_aerodata.shape[1]):
         torque += torque_i
         
         resultant += load
-        
+    
+    centroid = np.sum(np.multiply(aero_loads[:,i],new_nodes_z))/resultant
+    centroids_spanwise = np.append(centroids_spanwise,centroid)
+    #torques2=np.append(torques2, resultant*centroid)    
     resultant_forces = np.append(resultant_forces,resultant)
     torques = np.append(torques,torque)
 
@@ -306,10 +311,12 @@ Td = np.cumsum(Td_contributions)
 index_x1 = np.where(new_nodes_x>x_1)[0][0]
 index_x2 = np.where(new_nodes_x>x_2)[0][0]
 index_x3 = np.where(new_nodes_x>x_3)[0][0]
+index_x4 = np.where(new_nodes_x>x_4)[0][0]
 
 x1_nodes = new_nodes_x[0:index_x1]
 x2_nodes = new_nodes_x[0:index_x2]
 x3_nodes = new_nodes_x[0:index_x3]
+x4_nodes = new_nodes_x[0:index_x4]
 
 # DTd -- First integral of T w.r.t x
 DTd_contributions = np.multiply(Td_contributions,delta_x)
@@ -319,6 +326,7 @@ DTd = np.cumsum(DTd_contributions)
 DTd1 = DTd[index_x1]
 DTd2 = DTd[index_x2]
 DTd3 = DTd[index_x3]
+DTd4 = DTd[index_x4]
 
 # Third integral of q w.r.t x
 aero_deflection_slope_contributions =  np.multiply(aero_moment_z,delta_x)
@@ -340,7 +348,7 @@ FI3 = aero_deflection[index_x3]
 
 
 #RES=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]
-RES = Loading.matrix_solver(Ca,La,x_1,x_2,x_3,x_a,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant_force,aero_moment_z[-1],Td[-1],DTd1,DTd2,DTd3,FI1,FI2,FI3)
+RES = Loading.matrix_solver(Ca,La,x_1,x_2,x_3,x_a,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant_force,aero_moment_z[-1],Td[-1],DTd1,DTd2,DTd3,DTd4,FI1,FI2,FI3)
 
 R1y = RES[0]
 R2y = RES[1]
@@ -372,7 +380,6 @@ V_y_prime = np.array([])
 W_z = np.array([])
 W_z_prime = np.array([])
 twist = np.array([])
-
 
 # Loop through spanwise cross sections
 for i in range(new_aerodata.shape[1]):
@@ -427,13 +434,15 @@ for i in range(new_aerodata.shape[1]):
     
 
 
-'''
-# ----------------- GENERATE DEFLECTION PLOTS -----------------
 
-plt.plot(new_nodes_x,W_z)
-plt.plot(new_nodes_x,V_y_prime)
+# ----------------- GENERATE DEFLECTION PLOTS -----------------
+print(np.max(twist))
+plt.figure()
+plt.plot(new_nodes_x,T_x)
+plt.figure()
+plt.plot(new_nodes_x,twist)
 plt.show()
-'''
+
 
 
 
@@ -471,7 +480,7 @@ q_circle1,q_spar1,q_top,q_bottom,q_spar2,q_circle2 = section.get_shearflows()
 normal_stresses = np.array([])
 shear_stresses = np.array([])
 vm_stresses = np.array([])
-
+'''
 # Loop through spanwise crossections
 for i in range(new_aerodata.shape[1]):
     
@@ -613,7 +622,7 @@ plt.axvline(0,linestyle='dashed',color='black',linewidth=1) # y = 0
 plt.xlim(0.1,-0.45)
 plt.ylim(-0.1,0.1)
 plt.show()
-
+'''
 
 
 
