@@ -119,19 +119,20 @@ def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
 
 def get_J(G,ha,t_sk,w_st,t_sp,t_st,ca):
     #calculation of J by evaluating shear flows
-    #assumption - stiffeners excluded in analysis when integrating length over thickness
-    A1=(ha/8)**2*pi
+    #assumption - stiffeners included in analysis when integrating length over thickness
+    #stiffeners assumed as horizontal stiffeners, vertical part is disregarded
+    A1=(ha/2)**2*pi/2
     A2=sqrt((ha/2)**2 + (ca-ha/2)**2)*ha/2
     randtorque=1
     Y=[randtorque,
     0]
     AA=matrix([[2*A1, 2*A2],
-               [1/(2*A1*G)*((pi*ha/2)/t_sk + ha/(2*A2*G*t_sp) + ha/(2*A1*G*t_sp), - 1/(2*A2*G)*((2*sqrt((ha/2)**2+(ca-ha/2)**2))/t_sk) - ha/(2*A2*G*t_sp) - ha/(2*A1*G*t_sp)]])
+                 [1/(2*A1*G)*((pi*ha/2 - 3*w_st)/t_sk + 3*w_st/(t_sk+t_st)) + ha/(2*A2*G*t_sp) + ha/(2*A1*G*t_sp), - 1/(2*A2*G)*((2*sqrt((ha/2)**2+(ca-ha/2)**2) - 8*w_st)/t_sk + 8*w_st/(t_sk+t_st)) - ha/(2*A2*G*t_sp) - ha/(2*A1*G*t_sp)]])
     shears=solve(AA,Y)
     q1=shears[0]
     q2=shears[1]
-    dodz =  1/(2*A1)*(q1/G*((pi*ha/2)/t_sk) + (q1-q2)/G*(ha)/t_sp)
-    dodz2=1/(2*A2)*(q2/G*((2*sqrt((ha/2)**2+(ca-ha/2)**2))/t_sk) + (q2-q1)/G*(ha/t_sp))
+    dodz =  1/(2*A1)*(q1/G*((pi*ha/2 - 3*w_st)/t_sk + 3*w_st/(t_sk+t_st)) + (q1-q2)/G*(ha)/t_sp)
+    dodz2=1/(2*A2)*(q2/G*((2*sqrt((ha/2)**2+(ca-ha/2)**2) - 8*w_st)/t_sk + 8*w_st/(t_sk+t_st)) + (q2-q1)/G*(ha/t_sp))
     J=randtorque/(G*dodz)
     return J
 
