@@ -27,7 +27,7 @@ import time
 import Loading
 import Interpolation as inter
 import Read
-import final_integration as integration
+#import final_integration as integration
 import SectionalProperties as section
 
 # Start timer to measure runtime
@@ -577,6 +577,8 @@ for i in range(new_aerodata.shape[1]):
  
 
 
+vm_GPa = 1e-9*vm_stresses
+
 
 # Print runtime
 print('\n')
@@ -607,6 +609,7 @@ plt.axvline(0,linestyle='dashed',color='black',linewidth=1) # y = 0
 
 
 
+# Set ranges for axes and show plot
 plt.xlim(0.1,-0.45)
 plt.ylim(-0.1,0.1)
 plt.show()
