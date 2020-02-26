@@ -82,26 +82,26 @@ Jam_Straight_deformation = Jam_Straight_displ[['x','y','z']] + aileron_coords[['
 
 
 #--------------------------------------STRESSES------------------------------------------
-def average_stress_per_rib(Jam_Straight_stress):
+def average_stress_per_rib(stress):
     #For the average stresses
-    Jam_Straight_stress = Jam_Straight_stress.set_index('label')
+    stress = stress.set_index('label')
     #Average for points at rib a
-    Bending_VMstresses_riba = Jam_Straight_stress.iloc[coordinates_riba]
-    Bending_VMstresses_riba['VM_AV'] = (Bending_VMstresses_riba['Mises1']+Bending_VMstresses_riba['Mises2'])/2
-    Bending_VMstresses_riba['S12_AV'] = (Bending_VMstresses_riba['S121']+Bending_VMstresses_riba['S122'])/2
+    VMstresses_riba = stress.iloc[coordinates_riba]
+    VMstresses_riba['VM_AV'] = (VMstresses_riba['Mises1']+VMstresses_riba['Mises2'])/2
+    VMstresses_riba['S12_AV'] = (VMstresses_riba['S121']+VMstresses_riba['S122'])/2
     #Average for points at rib b
-    Bending_VMstresses_ribb = Jam_Straight_stress.iloc[coordinates_ribb]
-    Bending_VMstresses_ribb['VM_AV'] = (Bending_VMstresses_ribb['Mises1']+Bending_VMstresses_ribb['Mises2'])/2
-    Bending_VMstresses_ribb['S12_AV'] = (Bending_VMstresses_ribb['S121']+Bending_VMstresses_ribb['S122'])/2
+    VMstresses_ribb = stress.iloc[coordinates_ribb]
+    VMstresses_ribb['VM_AV'] = (VMstresses_ribb['Mises1']+VMstresses_ribb['Mises2'])/2
+    VMstresses_ribb['S12_AV'] = (VMstresses_ribb['S121']+VMstresses_ribb['S122'])/2
     #average for points at rib c
-    Bending_VMstresses_ribc = Jam_Straight_stress.iloc[coordinates_ribc]
-    Bending_VMstresses_ribc['VM_AV'] = (Bending_VMstresses_ribc['Mises1']+Bending_VMstresses_ribc['Mises2'])/2
-    Bending_VMstresses_ribc['S12_AV'] = (Bending_VMstresses_ribc['S121']+Bending_VMstresses_ribc['S122'])/2
+    VMstresses_ribc = stress.iloc[coordinates_ribc]
+    VMstresses_ribc['VM_AV'] = (VMstresses_ribc['Mises1']+VMstresses_ribc['Mises2'])/2
+    VMstresses_ribc['S12_AV'] = (VMstresses_ribc['S121']+VMstresses_ribc['S122'])/2
     #Average for points at rib d
-    Bending_VMstresses_ribd = Jam_Straight_stress.iloc[coordinates_ribc]
-    Bending_VMstresses_ribd['VM_AV'] = (Bending_VMstresses_ribd['Mises1']+Bending_VMstresses_ribd['Mises2'])/2
-    Bending_VMstresses_ribd['S12_AV'] = (Bending_VMstresses_ribd['S121']+Bending_VMstresses_ribd['S122'])/2
-    return Bending_VMstresses_riba,Bending_VMstresses_ribb,Bending_VMstresses_ribc,Bending_VMstresses_ribd
+    VMstresses_ribd = stress.iloc[coordinates_ribc]
+    VMstresses_ribd['VM_AV'] = (VMstresses_ribd['Mises1']+VMstresses_ribd['Mises2'])/2
+    VMstresses_ribd['S12_AV'] = (VMstresses_ribd['S121']+VMstresses_ribd['S122'])/2
+    return VMstresses_riba,VMstresses_ribb,VMstresses_ribc,VMstresses_ribd
 #--------------Bending-----------------
 
 #Bending Von Mises Stresses
@@ -156,27 +156,27 @@ JamStraight_VMstresses_riba,JamStraight_VMstresses_ribb,JamStraight_VMstresses_r
 # ax.set_ylabel('X axis')
 # ax.set_zlabel('Y axis')
 # plt.show()
-fig = plt.figure(figsize=(16,8))
-ax = fig.add_subplot(221)
-ax.set_title('Aileron LE deformation for Bending Case')
-ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
-ax.scatter(deformation_bending['x'].iloc[LE_coords],deformation_bending['y'].iloc[LE_coords], c='r')
-ax.grid()
-ax = fig.add_subplot(222)
-ax.set_title('Aileron LE Deformation for Jam_Bent Case')
-ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
-ax.scatter(Jam_Bent_deformation['x'].iloc[LE_coords],Jam_Bent_deformation['y'].iloc[LE_coords], c='r')
-ax.grid()
-ax = fig.add_subplot(223)
-ax.set_title('Aileron LE deformation Jam_Straight Case')
-ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
-ax.scatter(Jam_Straight_deformation['x'].iloc[LE_coords],Jam_Straight_deformation['y'].iloc[LE_coords], c='r')
-ax.grid()
-ax = fig.add_subplot(224)
-ax.set_title('Aileron deformation at rib D for Jam_Straight Case')
-ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
-ax.scatter(Jam_Straight_deformation['x'].iloc[LE_coords],Jam_Straight_deformation['y'].iloc[LE_coords], c='r')
-ax.grid()
+# fig = plt.figure(figsize=(16,8))
+# ax = fig.add_subplot(221)
+# ax.set_title('Aileron LE deformation for Bending Case')
+# ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
+# ax.scatter(deformation_bending['x'].iloc[LE_coords],deformation_bending['y'].iloc[LE_coords], c='r')
+# ax.grid()
+# ax = fig.add_subplot(222)
+# ax.set_title('Aileron LE Deformation for Jam_Bent Case')
+# ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
+# ax.scatter(Jam_Bent_deformation['x'].iloc[LE_coords],Jam_Bent_deformation['y'].iloc[LE_coords], c='r')
+# ax.grid()
+# ax = fig.add_subplot(223)
+# ax.set_title('Aileron LE deformation Jam_Straight Case')
+# ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
+# ax.scatter(Jam_Straight_deformation['x'].iloc[LE_coords],Jam_Straight_deformation['y'].iloc[LE_coords], c='r')
+# ax.grid()
+# ax = fig.add_subplot(224)
+# ax.set_title('Aileron deformation at rib D for Jam_Straight Case')
+# ax.scatter(aileron_coords['x'].iloc[LE_coords],aileron_coords['y'].iloc[LE_coords], c='g')
+# ax.scatter(Jam_Straight_deformation['x'].iloc[LE_coords],Jam_Straight_deformation['y'].iloc[LE_coords], c='r')
+# ax.grid()
 #plt.show()
 
 
@@ -214,6 +214,7 @@ Numer_model_bending_ribc_stress = {'Von_Mises_ribc' :[0,0,0,0]}
 Numer_model_bending_ribc_stress_df = pd.DataFrame(Numer_model_bending_ribc_stress, columns = ['Von_Mises_ribc'])
 Numer_model_bending_ribd_stress = {'Von_Mises_ribd' :[0,0,0,0]}
 Numer_model_bending_ribd_stress_df = pd.DataFrame(Numer_model_bending_ribd_stress, columns = ['Von_Mises_ribd'])
+
 #For the JamBent case ribs
 Numer_model_JamBent_riba_stress = {'Von_Mises_riba' :[0,0,0,0]}
 Numer_model_JamBent_riba_stress_df = pd.DataFrame(Numer_model_JamBent_riba_stress, columns = ['Von_Mises_riba'])
@@ -236,50 +237,100 @@ Numer_model_JamStraight_ribd_stress_df = pd.DataFrame(Numer_model_JamStraight_ri
 
 #For error calculations
 #------------------------------------DEFORMATION ERROR--------------------------------
+
+def error_calculator(Numer_model, FEM_model):
+    return (FEM_model-Numer_model)/FEM_model
+
 #Bending Deformation Error
 deformation_bending['Deformation Error x'] = (deformation_bending['x']-Numer_model_def_bending['x'])/(deformation_bending['x'])
 deformation_bending['Deformation Error y'] = (deformation_bending['y']-Numer_model_def_bending['y'])/(deformation_bending['y'])
 deformation_bending['Deformation Error z'] = (deformation_bending['z']-Numer_model_def_bending['z'])/(deformation_bending['z'])
-
-
-
 
 #JamBent Deformation Error
 Jam_Bent_deformation['Deformation Error x'] = (Jam_Bent_deformation['x']-Numer_model_def_JamBent['x'])/(Jam_Bent_deformation['x'])
 Jam_Bent_deformation['Deformation Error y'] = (Jam_Bent_deformation['y']-Numer_model_def_JamBent['y'])/(Jam_Bent_deformation['y'])
 Jam_Bent_deformation['Deformation Error z'] = (Jam_Bent_deformation['z']-Numer_model_def_JamBent['z'])/(Jam_Bent_deformation['z'])
 
-
-
 #JamStraight Deformation Error
 Jam_Straight_deformation['Deformation Error x'] = (Jam_Straight_deformation['x']-Numer_model_def_JamStraight['x'])/(Jam_Straight_deformation['x'])
 Jam_Straight_deformation['Deformation Error y'] = (Jam_Straight_deformation['y']-Numer_model_def_JamStraight['y'])/(Jam_Straight_deformation['y'])
 Jam_Straight_deformation['Deformation Error z'] = (Jam_Straight_deformation['z']-Numer_model_def_JamStraight['z'])/(Jam_Straight_deformation['z'])
 
+
 #--------------------------------------STRESS ERROR---------------------------------------
 #Bending Stress Error
-Bending_VMstresses_riba['VM Stress Error A'] = (Bending_VMstresses_riba['VM_AV']-Numer_model_bending_riba_stress_df['Von_Mises_riba'])/Bending_VMstresses_riba['VM_AV']
-Bending_VMstresses_ribb['VM Stress Error B'] = (Bending_VMstresses_ribb['VM_AV']-Numer_model_bending_ribb_stress_df['Von_Mises_ribb'])/Bending_VMstresses_ribb['VM_AV']
-Bending_VMstresses_ribc['VM Stress Error C'] = (Bending_VMstresses_ribc['VM_AV']-Numer_model_bending_ribc_stress_df['Von_Mises_ribc'])/Bending_VMstresses_ribc['VM_AV']
-Bending_VMstresses_ribd['VM Stress Error D'] = (Bending_VMstresses_ribd['VM_AV']-Numer_model_bending_ribd_stress_df['Von_Mises_ribd'])/Bending_VMstresses_ribd['VM_AV']
-
+Bending_VMstresses_riba['VM Stress Error A'] = error_calculator(Numer_model_bending_riba_stress_df['Von_Mises_riba'], Bending_VMstresses_riba['VM_AV'])
+Bending_VMstresses_ribb['VM Stress Error B'] = error_calculator(Numer_model_bending_ribb_stress_df['Von_Mises_ribb'], Bending_VMstresses_ribb['VM_AV'])
+Bending_VMstresses_ribc['VM Stress Error C'] = error_calculator(Numer_model_bending_ribc_stress_df['Von_Mises_ribc'], Bending_VMstresses_ribc['VM_AV'])
+Bending_VMstresses_ribd['VM Stress Error D'] = error_calculator(Numer_model_bending_ribd_stress_df['Von_Mises_ribd'], Bending_VMstresses_ribd['VM_AV'])
 
 #JamBent Error
-JamBent_VMstresses_riba['VM Stress Error A'] = (JamBent_VMstresses_riba['VM_AV']-Numer_model_JamBent_riba_stress_df['Von_Mises_riba'])/JamBent_VMstresses_riba['VM_AV']
-JamBent_VMstresses_ribb['VM Stress Error B'] = (JamBent_VMstresses_ribb['VM_AV']-Numer_model_JamBent_ribb_stress_df['Von_Mises_ribb'])/JamBent_VMstresses_ribb['VM_AV']
-JamBent_VMstresses_ribc['VM Stress Error C'] = (JamBent_VMstresses_ribc['VM_AV']-Numer_model_JamBent_ribc_stress_df['Von_Mises_ribc'])/JamBent_VMstresses_ribc['VM_AV']
-JamBent_VMstresses_ribd['VM Stress Error D'] = (JamBent_VMstresses_ribd['VM_AV']-Numer_model_JamBent_ribd_stress_df['Von_Mises_ribd'])/JamBent_VMstresses_ribd['VM_AV']
-
+JamBent_VMstresses_riba['VM Stress Error A'] = error_calculator(Numer_model_JamBent_riba_stress_df['Von_Mises_riba'], JamBent_VMstresses_riba['VM_AV'])
+JamBent_VMstresses_ribb['VM Stress Error B'] = error_calculator(Numer_model_JamBent_ribb_stress_df['Von_Mises_ribb'], JamBent_VMstresses_ribb['VM_AV'])
+JamBent_VMstresses_ribc['VM Stress Error C'] = error_calculator(Numer_model_JamBent_ribc_stress_df['Von_Mises_ribc'], JamBent_VMstresses_ribc['VM_AV'])
+JamBent_VMstresses_ribd['VM Stress Error D'] = error_calculator(Numer_model_JamBent_ribd_stress_df['Von_Mises_ribd'], JamBent_VMstresses_ribd['VM_AV'])
 
 #JamStraight Error
-JamStraight_VMstresses_riba['VM Stress Error A'] = (JamStraight_VMstresses_riba['VM_AV']-Numer_model_JamStraight_riba_stress_df['Von_Mises_riba'])/JamStraight_VMstresses_riba['VM_AV']
-JamStraight_VMstresses_ribb['VM Stress Error B'] = (JamStraight_VMstresses_ribb['VM_AV']-Numer_model_JamStraight_ribb_stress_df['Von_Mises_ribb'])/JamStraight_VMstresses_ribb['VM_AV']
-JamStraight_VMstresses_ribc['VM Stress Error C'] = (JamStraight_VMstresses_ribc['VM_AV']-Numer_model_JamStraight_ribc_stress_df['Von_Mises_ribc'])/JamStraight_VMstresses_ribc['VM_AV']
-JamStraight_VMstresses_ribd['VM Stress Error D'] = (JamStraight_VMstresses_ribd['VM_AV']-Numer_model_JamStraight_ribd_stress_df['Von_Mises_ribd'])/JamStraight_VMstresses_ribd['VM_AV']
+JamStraight_VMstresses_riba['VM Stress Error A'] = error_calculator(Numer_model_JamStraight_riba_stress_df['Von_Mises_riba'], JamStraight_VMstresses_riba['VM_AV'])
+JamStraight_VMstresses_ribb['VM Stress Error B'] = error_calculator(Numer_model_JamStraight_ribb_stress_df['Von_Mises_ribb'], JamStraight_VMstresses_ribb['VM_AV'])
+JamStraight_VMstresses_ribc['VM Stress Error C'] = error_calculator(Numer_model_JamStraight_ribc_stress_df['Von_Mises_ribc'], JamStraight_VMstresses_ribc['VM_AV'])
+JamStraight_VMstresses_ribd['VM Stress Error D'] = error_calculator(Numer_model_JamStraight_ribd_stress_df['Von_Mises_ribd'], JamStraight_VMstresses_ribd['VM_AV'])
 
 
 
+fig=plt.figure(figsize=(16,8))
+ax = fig.add_subplot(221)
+colorset=JamStraight_VMstresses_riba['VM_AV']
+ax.set_title('Stresses at rib A for the JamStraight Deformation')
 
+rib_a=ax.scatter(aileron_coords['z'].iloc[coordinates_riba], aileron_coords['y'].iloc[coordinates_riba], c=colorset)
+colorplot = plt.colorbar(rib_a)
+colorplot.ax.set_ylabel('avg Von Mises Stress (kN/$mm^2$)', rotation=90)
+ax.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
 
+ax = fig.add_subplot(222)
+ax.set_title('Aileron stresses at rib B for the JamStraight Deformation')
+colorset=JamStraight_VMstresses_ribb['VM_AV']
+rib_b=ax.scatter(aileron_coords['z'].iloc[coordinates_ribb], aileron_coords['y'].iloc[coordinates_ribb], c=colorset)
+colorplot = plt.colorbar(rib_b)
+colorplot.ax.set_ylabel('avg Von Mises Stress (kN/$mm^2$)', rotation=90)
+ax.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
 
+ax = fig.add_subplot(223)
+ax.set_title('Aileron stresses at rib C for the JamStraight Deformation')
+colorset=JamStraight_VMstresses_ribc['VM_AV']
+rib_c=ax.scatter(aileron_coords['z'].iloc[coordinates_ribc], aileron_coords['y'].iloc[coordinates_ribc], c=colorset)
+colorplot = plt.colorbar(rib_c)
+colorplot.ax.set_ylabel('avg Von Mises Stress (kN/$mm^2$)', rotation=90)
+ax.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
+
+ax = fig.add_subplot(224)
+ax.set_title('Aileron stresses at rib D for the JamStraight Deformation')
+colorset=JamStraight_VMstresses_ribd['VM_AV']
+rib_d=ax.scatter(aileron_coords['z'].iloc[coordinates_ribd], aileron_coords['y'].iloc[coordinates_ribd], c=colorset)
+colorplot = plt.colorbar(rib_d)
+colorplot.ax.set_ylabel('avg Von Mises Stress (kN/$mm^2$)', rotation=90)
+ax.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
+plt.plot()
+plt.show()
 
