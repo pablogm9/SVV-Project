@@ -127,7 +127,7 @@ def get_J(G,ha,t_sk,w_st,t_sp,t_st,ca):
     Y=[randtorque,
     0]
     AA=matrix([[2*A1, 2*A2],
-                 [1/(2*A1*G)*((pi*ha/2 - 3*w_st)/t_sk + 3*w_st/(t_sk+t_st)) + ha/(2*A2*G*t_sp) + ha/(2*A1*G*t_sp), - 1/(2*A2*G)*((2*sqrt((ha/2)**2+(ca-ha/2)**2) - 8*w_st)/t_sk + 8*w_st/(t_sk+t_st)) - ha/(2*A2*G*t_sp) - ha/(2*A1*G*t_sp)]])
+                 [1/(2*A1*G)*((pi*ha/2)/t_sk ) + ha/(2*A2*G*t_sp) + ha/(2*A1*G*t_sp), - 1/(2*A2*G)*((2*sqrt((ha/2)**2+(ca-ha/2)**2))/t_sk) - ha/(2*A2*G*t_sp) - ha/(2*A1*G*t_sp)]])
     shears=solve(AA,Y)
     q1=shears[0]
     q2=shears[1]
