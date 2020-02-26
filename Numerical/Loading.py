@@ -92,39 +92,37 @@ def matrix_solver(c,L,x1,x2,x3,xa,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,
     #print(X)
     "unknown vector X=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]"
     '''RHS vector Y with BCs'''
-    Y=[D+Py*Macaulay(L-(x2+xa/2)),  #Mz(L)=0
-       0,                             #My(L)=0
-       Td-(0-zshear)*Py*Macaulay(L-(x2+xa/2))**0+(ha/2)*Pz*Macaulay(L-(x2+xa/2))**0,    #T(L)=0
-       S+Py*Macaulay(L-(x2+xa/2))**0,      #Sy(L)=0
-       -Pz*Macaulay(L-(x2+xa/2))**0,       #Sz(L)=0
-       d1*cos(theta) +FI1/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x1-(x2+xa/2))**3+(zshear-0)*DTd1/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x1-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x1-(x2+xa/2))**3,      #v(x1) + twist(x1)*(zshear-0) = d1*cos(theta)
-       FI2/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x2-(x2+xa/2))**3+(zshear-0)*DTd2/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x2-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x2-(x2+xa/2))**3,                     #v(x2) + twist(x2)*(zshear-0) = 0
-       d3*cos(theta) +FI3/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x3-(x2+xa/2))**3+(zshear-0)*DTd3/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x3-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x3-(x2+xa/2))**3,      #v(x3) + twist(x3)*(zshear-0) = d3*cos(theta)
-       -d1*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x1-(x2+xa/2))**3+ DTd1/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x1-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x1-(x2+xa/2))**1,            #w(x1) + twist(x1)*(ha/2) = -d1*sin(theta)
-       Pz/(E*Iyy)*1/6*Macauley(x2-(x2+xa/2))**3+ DTd2/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x2-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x2-(x2+xa/2))**1,                           #w(x2) + twist(x2)*(ha/2) = 0
-       -d3*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x3-(x2+xa/2))**3+ DTd3/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x3-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x3-(x2+xa/2))**1,            #w(x3) + twist(x3)*(ha/2) = -d3*sin(theta)
-       Pz/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2+xa/2))**3 ,       #w(x2-xa/2)=0 at ACTUATOR 1
-       0]          #Ay - Aztan(30) = 0
-    '''
-    This Y vector includes all boundary conditions - RHS
-    The equation becomes XX*RES = Y
-    '''
-    
-    
-    XX=np.matrix([[Macaulay(L-x1),Macaulay(L-x2),Macaulay(L-x3),0,0,0,-Macaulay(L-(x2-xa/2)),0,0,0,0,0,0],
-                  [0,0,0,-Macaulay(L-x1),-Macaulay(L-x2),-Macaulay(L-x3),0,Macaulay(L-(x2-xa/2)),0,0,0,0,0],
-                  [- (0-zshear)*Macaulay(L-x1)**0, -(0-zshear)*Macaulay(L-x2)**0, -(0-zshear)*Macaulay(L-x3)**0,0,0,0,(0-zshear)*Macaulay(L-(x2-xa/2))**0, -(ha/2)*Macaulay(L-(x2-xa/2))**0,0,0,0,0,0],
-                  [Macaulay(L-x1)**0,Macaulay(L-x2)**0,Macaulay(L-x3)**0,0,0,0,-Macaulay(L-(x2-xa/2))**0,0,0,0,0,0,0],
-                  [0,0,0,-Macaulay(L-x1)**0, -Macaulay(L-x2)**0, -Macaulay(L-x3)**0,0,Macaulay(L-(x2-xa/2))**0, 0,0,0,0,0],
-                  [-1/(E*Izz)*1/6*(Macauley(x1-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x1-x1)**1, -1/(E*Izz)*1/6*(Macauley(x1-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x1-x2)**1, 0, 0,0,0, 0,0,x1,1,0,0,1],
-                  [-1/(E*Izz)*1/6*(Macauley(x2-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x2-x1)**1, -1/(E*Izz)*1/6*(Macauley(x2-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x2-x2)**1, 0, 0,0,0, 1/(E*Izz)*1/6*Macauley(x2-(x2-xa/2))**3 +(zshear-0)/(G*J)*(0-zshear)*Macaulay(x2-(x2-xa/2))**1,-(zshear-0)/(G*J)*(ha/2)*Macaulay(x2-(x2-xa/2))**1,x2,1,0,0,1],
-                  [-1/(E*Izz)*1/6*(Macauley(x3-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x1)**1, -1/(E*Izz)*1/6*(Macauley(x3-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x2)**1, -1/(E*Izz)*1/6*(Macauley(x3-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x1)**1, 0,0,0, 1/(E*Izz)*1/6*Macauley(x3-(x2-xa/2))**3 +(zshear-0)/(G*J)*(0-zshear)*Macaulay(x3-(x2-xa/2))**1,-(zshear-0)/(G*J)*(ha/2)*Macaulay(x3-(x2-xa/2))**1,x3,1,0,0,1],
-                  [-ha/(2*G*J)*(0-zshear)*Macaulay(x1-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x1-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x1-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x1-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x1-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x1-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x1-(x2-xa/2))**1,   0,0,x1,1,1  ],
-                  [-ha/(2*G*J)*(0-zshear)*Macaulay(x2-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x2-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x2-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x2-(x2-xa/2))**1,   0,0,x2,1,1  ],
-                  [-ha/(2*G*J)*(0-zshear)*Macaulay(x3-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x3-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x3-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x3-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x3-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x3-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x3-(x2-xa/2))**1,   0,0,x3,1,1  ],
-                  [0,0,0,  -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x3)**3),   0, 1/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3,   0,0,x2-xa/2,1,0],
-                  [0,0,0, 0,0,0, 1,-tan(theta), 0,0,0,0,0]])
-    
+   Y=[D+Py*Macaulay(L-(x2+xa/2)),  #Mz(L)=0
+     0,                             #My(L)=0
+     Td-(0-zshear)*Py*Macaulay(L-(x2+xa/2))**0+(ha/2)*Pz*Macaulay(L-(x2+xa/2))**0,    #T(L)=0
+     S+Py*Macaulay(L-(x2+xa/2))**0,      #Sy(L)=0
+     -Pz*Macaulay(L-(x2+xa/2))**0,       #Sz(L)=0
+     d1*cos(theta) +FI1/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x1-(x2+xa/2))**3+(zshear-0)*DTd1/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x1-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x1-(x2+xa/2))**3,      #v(x1) + twist(x1)*(zshear-0) = d1*cos(theta)
+     FI2/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x2-(x2+xa/2))**3+(zshear-0)*DTd2/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x2-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x2-(x2+xa/2))**3,                     #v(x2) + twist(x2)*(zshear-0) = 0
+     d3*cos(theta) +FI3/(Izz*E) - Py/(E*Izz)*1/6*Macauley(x3-(x2+xa/2))**3+(zshear-0)*DTd3/(G*J) - (zshear-0)*(0-zshear)/(G*J)*Py/6*Macauley(x3-(x2+xa/2))**3 + (zshear-0)*ha/2*1/(G*J)*Pz/6*Macauley(x3-(x2+xa/2))**3,      #v(x3) + twist(x3)*(zshear-0) = d3*cos(theta)
+     -d1*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x1-(x2+xa/2))**3+ DTd1/(G*J)*(0) - (0-zshear)/(G*J)*(0)*Py*Macauley(x1-(x2+xa/2))**1 + ha/(2*G*J)*0*Pz*Macauley(x1-(x2+xa/2))**1,            #w(x1) = -d1*sin(theta)
+     Pz/(E*Iyy)*1/6*Macauley(x2-(x2+xa/2))**3+ DTd2/(G*J)*(0) - (0-zshear)/(G*J)*(0)*Py*Macauley(x2-(x2+xa/2))**1 + ha/(2*G*J)*0*Pz*Macauley(x2-(x2+xa/2))**1,                           #w(x2) = 0
+     -d3*sin(theta)+Pz/(E*Iyy)*1/6*Macauley(x3-(x2+xa/2))**3+ DTd3/(G*J)*(0) - (0-zshear)/(G*J)*(0)*Py*Macauley(x3-(x2+xa/2))**1 + ha/(2*G*J)*0*Pz*Macauley(x3-(x2+xa/2))**1,            #w(x3) = -d3*sin(theta)
+     Pz/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2+xa/2))**3 + DTd4/(G*J)*(ha/2) - (0-zshear)/(G*J)*(ha/2)*Py*Macauley(x2-xa/2-(x2+xa/2))**1 + ha/(2*G*J)*ha/2*Pz*Macauley(x2-xa/2-(x2+xa/2))**1,       #w(x2-xa/2)+twist(x2-xa/2)*ha/2=0 at ACTUATOR 1
+     0]          #Ay - Aztan(30) = 0
+'''
+This Y vector includes all boundary conditions - RHS
+The equation becomes XX*RES = Y
+'''
+
+XX=np.matrix([[Macaulay(L-x1),Macaulay(L-x2),Macaulay(L-x3),0,0,0,-Macaulay(L-(x2-xa/2)),0,0,0,0,0,0],
+              [0,0,0,-Macaulay(L-x1),-Macaulay(L-x2),-Macaulay(L-x3),0,Macaulay(L-(x2-xa/2)),0,0,0,0,0],
+              [- (0-zshear)*Macaulay(L-x1)**0, -(0-zshear)*Macaulay(L-x2)**0, -(0-zshear)*Macaulay(L-x3)**0,0,0,0,(0-zshear)*Macaulay(L-(x2-xa/2))**0, -(ha/2)*Macaulay(L-(x2-xa/2))**0,0,0,0,0,0],
+              [Macaulay(L-x1)**0,Macaulay(L-x2)**0,Macaulay(L-x3)**0,0,0,0,-Macaulay(L-(x2-xa/2))**0,0,0,0,0,0,0],
+              [0,0,0,-Macaulay(L-x1)**0, -Macaulay(L-x2)**0, -Macaulay(L-x3)**0,0,Macaulay(L-(x2-xa/2))**0, 0,0,0,0,0],
+              [-1/(E*Izz)*1/6*(Macauley(x1-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x1-x1)**1, -1/(E*Izz)*1/6*(Macauley(x1-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x1-x2)**1, 0, 0,0,0, 0,0,x1,1,0,0,1],
+              [-1/(E*Izz)*1/6*(Macauley(x2-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x2-x1)**1, -1/(E*Izz)*1/6*(Macauley(x2-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x2-x2)**1, 0, 0,0,0, 1/(E*Izz)*1/6*Macauley(x2-(x2-xa/2))**3 +(zshear-0)/(G*J)*(0-zshear)*Macaulay(x2-(x2-xa/2))**1,-(zshear-0)/(G*J)*(ha/2)*Macaulay(x2-(x2-xa/2))**1,x2,1,0,0,1],
+              [-1/(E*Izz)*1/6*(Macauley(x3-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x1)**1, -1/(E*Izz)*1/6*(Macauley(x3-x2)**3)- (zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x2)**1, -1/(E*Izz)*1/6*(Macauley(x3-x1)**3)-(zshear-0)*1/(G*J)*(0-zshear)*Macaulay(x3-x1)**1, 0,0,0, 1/(E*Izz)*1/6*Macauley(x3-(x2-xa/2))**3 +(zshear-0)/(G*J)*(0-zshear)*Macaulay(x3-(x2-xa/2))**1,-(zshear-0)/(G*J)*(ha/2)*Macaulay(x3-(x2-xa/2))**1,x3,1,0,0,1],
+              [0, 0, 0,  -1/(E*Iyy)*1/6*(Macauley(x1-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x1-x3)**3),    0, 1/(E*Iyy)*1/6*Macauley(x1-(x2-xa/2))**3,   0,0,x1,1,0  ],
+              [0, 0, 0,  -1/(E*Iyy)*1/6*(Macauley(x2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-x3)**3),    0, 1/(E*Iyy)*1/6*Macauley(x2-(x2-xa/2))**3,   0,0,x2,1,0  ],
+              [0, 0, 0,  -1/(E*Iyy)*1/6*(Macauley(x3-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x3-x3)**3),    0, 1/(E*Iyy)*1/6*Macauley(x3-(x2-xa/2))**3,   0,0,x3,1,0  ],
+              [-ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x1)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x2)**1, -ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-x3)**1,  -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x1)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x2)**3), -1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x3)**3),    ha/(2*G*J)*(0-zshear)*Macaulay(x2-xa/2-(x2-xa/2))**1, 1/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1,   0,0,x2-xa/2,1,1 ],
+              [0,0,0, 0,0,0, 1,-tan(theta), 0,0,0,0,0]])
     #RES=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]
     RES=np.linalg.solve(XX,Y)
     return RES
