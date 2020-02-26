@@ -156,39 +156,40 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     
 
     
-    def qb1(theta):
-        return t_skin/Izz*(r**2*-cos(theta))
+    #Shear flow calculation y force, open section cut at LE and hingeline 
 
-    def qb2(s):
-        return t_spar/Izz*s**2/2
+    def qb1(theta):     # Shear Flow open section top circular
+        return itg.integral_circ(0, theta)
 
-    def qb3(s):
-        return t_skin/Izz*(r*s - s**2/2*r/s1) - qb1(0) + qb2(r)
+    def qb2(s):     # Spar Top 
+        return itg.integral_spar(0, s)
 
-    def qb4(s):
-        return t_skin/Izz*(-s**2/2*r/s1) + qb3(s1)
+    def qb3(s):     # Triangular part top
+        return  itg.integral_triang(0, s) + qb1(pi/2) + qb2(r)
 
-    def qb5(s):
-        return t_spar/Izz*(-r*s + s**2/2) + qb2(r)
+    def qb4(s):     # Triangular part bottom
+        return  itg.integral_triang2(0, s) + qb3(s1)
 
-    def qb6(s):
-        return t_skin/Izz*(r**2*-cos(theta)) - qb1(0)
+    def qb5(s):     # Spar bottom
+        return  itg.integral_spar2(0, r) + qb2(r)
+
+    def qb6(theta):     # Circular part bottom
+        return  itg.integral_circ(-pi/2, theta) + qb1(pi/2)
 
     """
     shears = []
     s_tot = []
     s = 0
-
     while s<=s1:
         shears.append(qb4(s))
         s_tot.append(s)
         s += ds
-
     plt.pyplot.plot(s_tot, shears)
     """
+    qs0_circ = -((itg.second_integral_circ(0, pi/2)/t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
+    qs0_triang = -(itg.second_integral_triang(0, s1) + itg.second_integral_triang2(0, s1) + itg.second_integral_spar(0, r) + itg.second_integral_spar2(0, r) + (qb1(pi/2) + qb2(r))*s1/t_skin + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
 
-    qs0_circ = -(1/Izz*(-r**3*sin(pi/2) - r**3/6 - (-r**3/2 + r**3/6) + (-r**3*sin(-pi/2))) - qb2(r)*r/t_spar - qb1(0)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
-    qs0_triang = -(1/Izz*((r**3/2 - r**4/6/s1) + -r**4/6/s1 + r**3/6 + (-r**3/2 + r**3/6)) - qb1(0)*s1/t_skin + qb2(r)*s1/t_spar + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
+
 
     def qs1(s):
         return qb1(s) + qs0_circ
@@ -208,30 +209,66 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     def qs6(s):
         return qb6(s) + qs0_circ
 
-    shears = []
-    s_tot = []
-    s = 0
-    ksi = 0
-    while s<=s1:
-        ksi += r*(ca-r)/s1*ds*qs3(s)
-        s += ds
 
-    s = 0
-    while s<=s1:
-        ksi += r*(ca-r)/s1*ds*qs4(s)
-        s += ds
-
+    shears1 = []
+    thetas1 = []
     theta = 0
-
-    while theta<=pi/2:
-        ksi += -r*qs1(theta)*dtheta*r
+    while theta<=(pi/2):
+        shears1.append(qs1(theta))
+        thetas1.append(theta)
         theta += dtheta
 
+    shears6 = []
+    thetas6 = []
     theta = -pi/2
 
     while theta<=0:
-        ksi += -r*qs1(theta)*dtheta*r
-        theta += dtheta    
+        shears6.append(qs6(theta))
+        thetas6.append(theta + pi/2)
+        theta += dtheta
+
+    shears2 = []
+    thetas2 = []
+    s = 0
+    while s<=r:
+        shears2.append(qs2(s))
+        thetas2.append(s)
+        s += dr
+
+    shears5 = []
+    thetas5 = []
+    s = 0
+    while s<=r:
+        shears5.append(qs5(s))
+        thetas5.append(s)
+        s += dr
+
+    shears3 = []
+    thetas3 = []
+    s = 0
+    while s<=s1:
+        shears3.append(qs3(s))
+        thetas3.append(s)
+        s += ds
+
+    shears4 = []
+    thetas4 = []
+    s = 0
+    while s<=s1:
+        shears4.append(qs4(s))
+        thetas4.append(s)
+        s += ds
+
+    plt.pyplot.plot(thetas1, shears1)
+    plt.pyplot.plot(thetas6, shears6)
+    #plt.pyplot.plot(thetas2, shears2)
+    #plt.pyplot.plot(thetas5, shears5)
+    #plt.pyplot.plot(thetas3, shears3)
+    #plt.pyplot.plot(thetas4, shears4)
+
+    ksi = 0
+    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)*s1*2
+    ksi += r*sum(shears1)/len(shears1)*pi*r   
     return -ksi
     
     
