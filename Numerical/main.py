@@ -238,7 +238,7 @@ for i in range(new_aerodata.shape[1]):
 
     # ADD -- Convert q to force by multiplying by d_x,d_z (area in between spanwise crossections)
     if i ==0: 
-        delta_span = new_nodes_x[i]
+        delta_span = new_nodes_x[2]-new_nodes[1]
         delta_x = np.append(delta_x,delta_span)
     else:
         delta_span = new_nodes_x[i] - new_nodes_x[i-1]
