@@ -283,4 +283,3 @@ JamStraight_VMstresses_ribd['VM Stress Error D'] = (JamStraight_VMstresses_ribd[
 
 
 
-
