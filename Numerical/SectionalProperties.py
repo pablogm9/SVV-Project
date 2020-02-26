@@ -11,7 +11,7 @@ from numpy import cos,sin,pi,sqrt, arctan, arange,matrix,pi,linspace,array,appen
 from numpy.linalg import solve
 from math import *
 import matplotlib as plt
-
+import ShearIntegrator as itg
 
 
 def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
