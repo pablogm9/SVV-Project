@@ -71,6 +71,7 @@ aircraft = 'F100'
 
 
 
+
 # ----------------- SECTIONAL PROPERTIES  -----------------
 
 Izz, Iyy, z_centroid = section.get_MoI(ha,Ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff) # Moments of Inertia
@@ -79,6 +80,12 @@ J = section.get_J(G, ha, t_sk, w_st, t_sp, t_st, Ca)
 
 
 # ----------------- AERODYNAMIC DATA -----------------
+
+print('\n')
+print('\n')
+print('Extracting aerodynamic data from .txt file...')
+print('\n')
+print('\n')
 
 # Get original aerodynamic data (before interpolation)
 original_aerodata,x_coord,z_coord = Read.get_data(aircraft, Ca, La)
@@ -117,7 +124,8 @@ new_nodes_z = np.array([])
 
 # ----------------- INTERPOLATION STEP 1 -----------------
 # (Go from 81x41 to 500x41)
-
+print('\n')
+print('\n')
 
 # Initialize matrix with intermidiate aerodynamic data (1/2 interpolation steps) 
 intermidiate_aerodata = np.zeros((total_points_chord,original_shape[1]))
@@ -125,6 +133,11 @@ intermidiate_aerodata = np.zeros((total_points_chord,original_shape[1]))
 
 #Loop through spanwise cross-sections
 for i in range(n_span+1):
+    
+    percentage=round(50*i/n_span,2)
+    
+    if percentage%5==0:
+        print('Interpolating aerodynamic data... '+str(percentage)+'%'+'\n')
 
     
     # Select individual spanwise cross section from original aerodymic data
@@ -146,6 +159,7 @@ for i in range(n_span+1):
     
     
     
+    
 # ----------------- INTERPOLATION STEP 2 -----------------
 # (Go from 500x41 to 500x100)
     
@@ -155,6 +169,12 @@ new_aerodata = np.zeros((total_points_chord,total_points_span))
 
 #Loop through chordwise cross-sections
 for i in range(intermidiate_aerodata.shape[0]):
+    
+    percentage = 50 + 50*i/(intermidiate_aerodata.shape[0]-1)
+    
+    if percentage%5==0:
+        print('Interpolating aerodynamic data... '+str(round(percentage,2))+'%'+'\n')
+
     
     # Select individual chordwise cross section from intermidiate aerodynamic data
     cross_sectional_loading = intermidiate_aerodata[i,:]
@@ -201,8 +221,16 @@ aero_loads = np.zeros(new_aerodata.shape)
 # Spanwise spacing -- steps in x direction 
 delta_x = np.array([])
 
+print('\n')
+print('\n')
 # Loop through cross sections
 for i in range(new_aerodata.shape[1]):
+    
+    percentage = 100*i/(new_aerodata.shape[1]-1)
+    
+    if percentage%5==0:                    
+        print('Computing resultant forces at grid nodes... '+str(round(percentage,2))+'%\n')
+
     
     q = new_aerodata[:,i] # Pressure distribution
 
@@ -237,32 +265,26 @@ for i in range(new_aerodata.shape[1]):
     resultant_forces = np.append(resultant_forces,resultant)
     torques = np.append(torques,torque)
 
-    '''
-    # Pressure distribution at the cross section
-    q_pressure = new_aerodata[:,i]
-    
-    # Product of q_pressure * z-coord for centroid calculation
-    qz = np.multiply(q_pressure,new_nodes_z)
-    
-    # Resultant force per unit span at the cross section
-    cross_section_integral = integration.integrate(new_nodes_z,q_pressure,'single')
-    numerator = integration.integrate(new_nodes_z,qz,'single')
-
-     
-    # Append resultant force per unit span to list of resultant forces per unit span
-    resultant_forces = np.append(resultant_forces,cross_section_integral)
-
-    # Compute and append centroid of cross section
-    z_centroid = numerator/cross_section_integral
-    centroids_spanwise = np.append(centroids_spanwise,z_centroid)
-
-    # Compute and append torque at cross section
-    cross_section_torque = abs(cross_section_integral)*(z_centroid-z_sc)
-    torques = np.append(torques,cross_section_torque)
-    '''
+          
+          
 
 
-    
+'''
+
+# ----------------- PLOT COUNTOUR MAP AND 3D SURFACE OF INTERPOLATED DATA ----------------- 
+
+
+
+
+
+
+
+
+
+
+
+
+'''    
     
 # ----------------- COMPUTING INTEGRALS REQUIRED TO SOLVE S.O.E. ----------------- 
 
@@ -315,6 +337,8 @@ FI3 = aero_deflection[index_x3]
 
 # ----------------- SOLVING S.O.E. FOR REACTION FORCES AND INTEGRATION CONSTANTS -----------------
 
+
+
 #RES=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]
 RES = Loading.matrix_solver(Ca,La,x_1,x_2,x_3,x_a,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant_force,aero_moment_z[-1],Td[-1],DTd1,DTd2,DTd3,FI1,FI2,FI3)
 
@@ -336,8 +360,8 @@ C5 = RES[12]
 
 
 # ----------------- COMPUTE MOMENTS AND DEFLECTIONS AS A 'FUNCTION' OF X -----------------
-
-
+print('\n')
+print('\n')
 M_y = np.array([])
 M_z = np.array([])
 T_x = np.array([]) #Note that this torque includes the torque due to aero loading and that due to reaction forces
@@ -352,6 +376,12 @@ twist = np.array([])
 
 # Loop through spanwise cross sections
 for i in range(new_aerodata.shape[1]):
+    
+    percentage = 100*i/(new_aerodata.shape[1]-1)
+                        
+    if percentage%5==0:
+        print('Computing shear forces, moments, displacements, and twist... '+str(round(percentage,2))+'%\n')
+
         
     #Calculate required integrals
     D_i = aero_moment_z[i]
@@ -393,10 +423,12 @@ for i in range(new_aerodata.shape[1]):
     W_z = np.append(W_z,W_z_i)
     W_z_prime = np.append(W_z_prime,W_z_prime_i)
     twist = np.append(twist,twist_i)
+    
+    
 
 
 '''
-# ----------------- GENERATE PLOTS -----------------
+# ----------------- GENERATE DEFLECTION PLOTS -----------------
 
 plt.plot(new_nodes_x,W_z)
 plt.plot(new_nodes_x,V_y_prime)
@@ -408,7 +440,7 @@ plt.show()
 # ----------------- STRESS CALCULATIONS -----------------
 
 # Get discretization of cross section -- (z,y) coordiantes of points
-circle1,circle2,spar1,spar2,top,bottom = section.discretize_crosssection(10000)
+circle1,circle2,spar1,spar2,top,bottom = section.discretize_crosssection(1000)
 
 circle_1_z = circle1[0]
 circle_1_y = circle1[1]
@@ -443,20 +475,27 @@ vm_stresses = np.array([])
 # Loop through spanwise crossections
 for i in range(new_aerodata.shape[1]):
     
+    percentage = 100*i/(new_aerodata.shape[1]-1)
+    
+    if percentage%5==0:
+        print('Calculating shear flow and Von Mises stress distributions... '+str(round(percentage,2))+'%\n')
+    
+    
     normal_stresses_crosssection = np.array([])
     shear_stresses_crosssection = np.array([])
     vm_stresses_crosssection = np.array([])
     
-    V_y = V_y[i]
-    W_z = W_z[i]
-    T_x = T_x[i]
+    #V_y = V_y[i]
+    #W_z = W_z[i]
+    #T_x = T_x[i]
+    
     
     # ------- SHEAR STRESSES -------
     
     # Compute shear flows due to torque
     # Effect of stiffeners excluded in calculation
-    Y=[T_x,0]
-    A=np.matrix([[2*A_circ, 2*A_triang],[1/(2*A_circ*G)*((pi*ha/2)/t_sk) + ha/(2*A_triang*G*t_sp) + ha/(2*A_circ*G*t_sp), - 1/(2*A_triang*G)*((2*sqrt((ha/2)**2+(c-ha/2)**2))/t_sk) - ha/(2*A_triang*G*t_sp) - ha/(2*A_circ*G*t_sp)]])
+    Y=[T_x[i],0]
+    A=np.matrix([[2*A_circ, 2*A_triang],[1/(2*A_circ*G)*((pi*ha/2)/t_sk) + ha/(2*A_triang*G*t_sp) + ha/(2*A_circ*G*t_sp), - 1/(2*A_triang*G)*((2*sqrt((ha/2)**2+(Ca-ha/2)**2))/t_sk) - ha/(2*A_triang*G*t_sp) - ha/(2*A_circ*G*t_sp)]])
     shears=np.linalg.solve(A,Y)
     
     q_circle0=shears[0]
@@ -527,7 +566,7 @@ for i in range(new_aerodata.shape[1]):
     
     # ------- VON MISES STRESSES -------
     
-    for i in range(crosssection_z):
+    for i in range(len(crosssection_z)):
         vm = sqrt((normal_stresses_crosssection[i] ** 2) * (3*(shear_stresses_crosssection[i] ** 2)))
         vm_stresses_crosssection = np.append(vm_stresses_crosssection,vm)
         
@@ -536,17 +575,37 @@ for i in range(new_aerodata.shape[1]):
     normal_stresses = np.append(normal_stresses,normal_stresses_crosssection) 
     vm_stresses = np.append(vm_stresses,vm_stresses_crosssection)       
  
-     
+
+
+
+# Print runtime
+print('\n')
+print('\n')
+print('Complete.'+'\n\n'+'Runtime: %f seconds\n' % (time.time()-start_time))
+
+    
 
 # ----------------- PLOT CROSS-SECTION -----------------
-'''
-plt.plot(circle_z,circle_y,'b')
-plt.plot(spar_z,spar_y,'b')
-plt.plot(top_z,top_y,'b')
-plt.plot(bottom_z,bottom_y,'b')
 
-plt.axhline(0,color='red',linewidth=1) # x = 0
-plt.axvline(0,color='red',linewidth=1) # y = 0
+# Cross section
+plt.plot(circle_1_z,circle_1_y,'k',linewidth=6)
+plt.plot(circle_2_z,circle_2_y,'k',linewidth=6)
+plt.plot(spar_1_z,spar_1_y,'k',linewidth=6)
+plt.plot(spar_2_z,spar_2_y,'k',linewidth=6)
+plt.plot(top_z,top_y,'k',linewidth=6)
+plt.plot(bottom_z,bottom_y,'k',linewidth=6)
+
+# Plot origin
+plt.plot(0,0,'k.')
+
+# Plot axes
+plt.axhline(0,linestyle='dashed',color='black',linewidth=1) # x = 0
+plt.axvline(0,linestyle='dashed',color='black',linewidth=1) # y = 0
+
+
+# Plot heatmap of von mises stress
+
+
 
 plt.xlim(0.1,-0.45)
 plt.ylim(-0.1,0.1)
@@ -554,10 +613,9 @@ plt.show()
 
 
 
-# Print runtime
-print('Runtime: %f seconds' % (time.time()-start_time))
 
-'''
+
+
 
 
 
