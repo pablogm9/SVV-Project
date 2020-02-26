@@ -478,49 +478,6 @@ def get_shearflows():
     def qs6_z(s):
         return qb6_z(s) + qs0_circ_z
 
-    
-    '''
-    def qb1_z(theta):
-        return Vz*t_skin/Izz*(r**2*sin(theta))
-
-    def qb2_z(s):
-        return Vz*t_spar/Izz*s
-    
-    def qb3_z(s):
-        return Vz*t_skin/Izz*angle*s**2/2 + qb1(pi/2) + qb2(r)
-    
-    def qb4_z(s):
-        return Vz*t_skin/Izz*(-(ca-r)*s + angle*s**2/2) + qb3(s1)
-    
-    def qb5_z(s):
-        return Vz*t_spar/Izz*s + qb2(r)
-    
-    def qb6_z(theta):
-        return Vz*t_skin/Izz*(r**2*sin(theta)) + qb1(pi/2)
-    
-    
-    qs0_circ_z = -(Vz/Izz*(2*r**3*cos(0) - r**2/2 - r**2/2) - qb2(r)*r/t_spar + qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
-    qs0_triang_z = -(Vz/Izz*(s1**3/6 + -(ca-r)*s1**2/2 + angle*s1**3/6 + r**2/2) + qb1(pi/2)*s1/t_skin + qb2(r)*s1/t_spar + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
-    
-    
-    def qs1_z(s):
-        return qb1_z(s) + qs0_circ_z
-    
-    def qs2_z(s):
-        return qb2_z(s) - qs0_circ_z + qs0_triang_z
-    
-    def qs3_z(s):
-        return qb3_z(s) + qs0_triang_z
-    
-    def qs4_z(s):
-        return qb4_z(s) + qs0_triang_z
-    
-    def qs5_z(s):
-        return qb5_z(s) - qs0_circ_z + qs0_triang_z
-    
-    def qs6_z(s):
-        return qb6_z(s) + qs0_circ_z
-    '''
     '''
     shears = []
     s_tot = []
