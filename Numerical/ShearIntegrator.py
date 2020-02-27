@@ -4,6 +4,9 @@ Created on Tue Feb 25 16:11:48 2020
 
 @author: Marni
 """
+import numpy as np
+from math import *
+
 r = 0.0805
 ca = 0.505
 t_skin = 0.0011
