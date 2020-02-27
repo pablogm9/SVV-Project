@@ -14,6 +14,7 @@ import matplotlib as plt
 import ShearIntegrator as itg
 
 
+
 def get_MoI(ha,ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff):
     
     #Stiffener Spacing in the Triangle
@@ -122,7 +123,7 @@ def get_J(G,ha,t_sk,w_st,t_sp,t_st,ca):
     #assumption - stiffeners included in analysis when integrating length over thickness
     #stiffeners assumed as horizontal stiffeners, vertical part is disregarded
     A1=(ha/2)**2*pi/2
-    A2=(ca-ha/2)*ha/2
+    A2=sqrt((ha/2)**2 + (ca-ha/2)**2)*ha/2
     randtorque=1
     Y=[randtorque,
     0]
@@ -186,7 +187,7 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         s += ds
     plt.pyplot.plot(s_tot, shears)
     """
-    qs0_circ = -((itg.second_integral_circ(0, pi/2)/t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
+    qs0_circ = -(( itg.second_integral_circ(0, pi/2) /t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
     qs0_triang = -(itg.second_integral_triang(0, s1) + itg.second_integral_triang2(0, s1) + itg.second_integral_spar(0, r) + itg.second_integral_spar2(0, r) + (qb1(pi/2) + qb2(r))*s1/t_skin + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
     
     
@@ -267,9 +268,10 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     #plt.pyplot.plot(thetas4, shears4)
     
     ksi = 0
-    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)*s1
-    ksi += r*(ca-r)/-s1*sum(shears4)/len(shears4)*s1
-    ksi += r*sum(shears1)/len(shears1)*pi*r  
+    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)
+    ksi += r*(ca-r)/-s1*sum(shears4)/len(shears4)
+    ksi += r*sum(shears1)/len(shears1)*pi*r/2  
+    ksi += r*sum(shears6)/len(shears6)*pi*r/2 
     return ksi
     
     
@@ -383,7 +385,7 @@ def discretize_crosssection(n):
     return circle_1_coords,circle_2_coords,spar_1_coords,spar_2_coords,topline_coords,bottomline_coords
     
     
-def get_shearflows():
+def get_shearflows(Fy, Fz):
     
     Izz = 4.753851442684436e-06  
     t_skin =  0.0011
@@ -410,22 +412,22 @@ def get_shearflows():
     
     
     def qb1(theta):     # Shear Flow open section top circular
-        return itg.integral_circ(0, theta)
+        return Fy*itg.integral_circ(0, theta)
 
     def qb2(s):     # Spar Top 
-        return itg.integral_spar(0, s)
+        return Fy*itg.integral_spar(0, s)
     
     def qb3(s):     # Triangular part top
-        return  itg.integral_triang(0, s) + qb1(pi/2) + qb2(r)
+        return  Fy*itg.integral_triang(0, s) + qb1(pi/2) + qb2(r)
     
     def qb4(s):     # Triangular part bottom
-        return  itg.integral_triang2(0, s) + qb3(s1)
+        return  Fy*itg.integral_triang2(0, s) + qb3(s1)
     
     def qb5(s):     # Spar bottom
-        return  itg.integral_spar2(0, r) + qb2(r)
+        return  Fy*itg.integral_spar2(0, r) + qb2(r)
     
     def qb6(theta):     # Circular part bottom
-        return  itg.integral_circ(-pi/2, theta) + qb1(pi/2)
+        return  Fy*itg.integral_circ(-pi/2, theta) + qb1(pi/2)
     
     """
     shears = []
@@ -466,22 +468,22 @@ def get_shearflows():
     # Shear Flows Z - force
     
     def qb1_z(theta):     # Shear Flow open section top circular
-        return itg.integral_circ_z(0, theta)
+        return Fz*itg.integral_circ_z(0, theta)
 
     def qb2_z(s):     # Spar Top 
-        return itg.integral_spar_z(0, s)
+        return Fz*itg.integral_spar_z(0, s)
     
     def qb3_z(s):     # Triangular part top
-        return  itg.integral_triang_z(0, s) + qb1_z(pi/2) + qb2_z(r)
+        return  Fz*itg.integral_triang_z(0, s) + qb1_z(pi/2) + qb2_z(r)
     
     def qb4_z(s):     # Triangular part bottom
-        return  itg.integral_triang2_z(0, s) + qb3_z(s1)
+        return  Fz*itg.integral_triang2_z(0, s) + qb3_z(s1)
     
     def qb5_z(s):     # Spar bottom
-        return  itg.integral_spar2_z(0, r) + qb2_z(r)
+        return  Fz*itg.integral_spar2_z(0, r) + qb2_z(r)
     
     def qb6_z(theta):     # Circular part bottom
-        return  itg.integral_circ_z(-pi/2, theta) + qb1_z(pi/2)
+        return  Fz*itg.integral_circ_z(-pi/2, theta) + qb1_z(pi/2)
     
     """
     shears = []
@@ -536,7 +538,7 @@ def get_shearflows():
     qbot = []
      
     s = 0
-    while s<=pi/2:
+    while s<=pi/2-dtheta:
         qsc1.append(qs1_z(s) + qs1(s))
         s += dtheta
     
@@ -566,7 +568,7 @@ def get_shearflows():
      
     s = -pi/2
     
-    while s<=0:
+    while s<=0-dtheta:
         qsc2.append(qs6_z(s) + qs6(s))
         s += dtheta
     
