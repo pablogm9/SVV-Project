@@ -517,8 +517,8 @@ top_y = top[1]
 bottom_z = bottom[0]
 bottom_y = bottom[1]
 
-crosssection_z = np.concatenate((circle_1_z,spar_1_z,top_z,bottom_z,spar_2_z,circle_2_z))
-crosssection_y = np.concatenate((circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,circle_2_y))
+crosssection_z = np.array([circle_1_z,spar_1_z,top_z,bottom_z,spar_2_z,circle_2_z])
+crosssection_y = np.array([circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,circle_2_y])
 
 
 # Get shear flows due to shear forcesat each points
@@ -529,7 +529,7 @@ q_circle1,q_spar1,q_top,q_bottom,q_spar2,q_circle2 = section.get_shearflows(V_y[
 normal_stresses = np.array([])
 shear_stresses = np.array([])
 vm_stresses = np.array([])
-'''
+
 # Loop through spanwise crossections
 for i in range(new_aerodata.shape[1]):
     
@@ -643,7 +643,7 @@ print('\n')
 print('\n')
 print('Complete.'+'\n\n'+'Runtime: %f seconds\n' % (time.time()-start_time))
 
-    
+'''   
 
 # ----------------- PLOT CROSS-SECTION -----------------
 
