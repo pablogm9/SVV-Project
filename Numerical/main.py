@@ -76,7 +76,6 @@ aircraft = 'F100'
 
 Izz, Iyy, z_centroid = section.get_MoI(ha,Ca,t_st,w_st,h_st,A_st,t_sk,t_sp,nstiff) # Moments of Inertia
 z_sc = section.get_SC(t_sk, t_sp, ha, Ca, Izz) # Z-location of shear center
-z_sc = -0.0846 + ha/2
 J = section.get_J(G, ha, t_sk, w_st, t_sp, t_st, Ca)
 
 
