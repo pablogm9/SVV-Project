@@ -521,7 +521,8 @@ crosssection_y = np.concatenate((circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,cir
 
 
 # Get shear flows due to shear forcesat each points
-q_circle1,q_spar1,q_top,q_bottom,q_spar2,q_circle2 = section.get_shearflows()
+q_circle1,q_spar1,q_top,q_bottom,q_spar2,q_circle2 = section.get_shearflows(V_y[384], W_z[384])
+
 
 # Array containing one subarray per cross section. Each subrray contains 60000 points
 normal_stresses = np.array([])
@@ -646,12 +647,13 @@ print('Complete.'+'\n\n'+'Runtime: %f seconds\n' % (time.time()-start_time))
 # ----------------- PLOT CROSS-SECTION -----------------
 
 # Cross section
-plt.plot(circle_1_z,circle_1_y,'k',linewidth=6)
-plt.plot(circle_2_z,circle_2_y,'k',linewidth=6)
-plt.plot(spar_1_z,spar_1_y,'k',linewidth=6)
-plt.plot(spar_2_z,spar_2_y,'k',linewidth=6)
-plt.plot(top_z,top_y,'k',linewidth=6)
-plt.plot(bottom_z,bottom_y,'k',linewidth=6)
+plt.scatter(circle_1_z,circle_1_y, c = q_circle1 + Td[385]/t_sp/2/A_circ, cmap = 'jet', linewidth = 0.5)
+plt.scatter(circle_2_z,circle_2_y,c = q_circle2 + Td[385]/t_sp/2/A_circ, cmap = 'jet', linewidth = 0.5)
+plt.scatter(spar_1_z,spar_1_y,c = q_spar1 + Td[385]/t_sp/2/A_circ + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
+plt.scatter(spar_2_z,spar_2_y,c = q_spar2 + Td[385]/t_sp/2/A_circ + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
+plt.scatter(top_z,top_y,c = q_top + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
+plt.scatter(bottom_z,bottom_y,c = q_bottom + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
+
 
 # Plot origin
 plt.plot(0,0,'k.')
