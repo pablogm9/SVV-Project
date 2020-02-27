@@ -386,6 +386,7 @@ aero_deflection = np.cumsum(aero_deflection_contributions)
 FI1 = aero_deflection[index_x1]
 FI2 = aero_deflection[index_x2]
 FI3 = aero_deflection[index_x3]
+FI4 = aero_deflection[index_x4]
 
 
 # ----------------- SOLVING S.O.E. FOR REACTION FORCES AND INTEGRATION CONSTANTS -----------------
@@ -393,7 +394,7 @@ FI3 = aero_deflection[index_x3]
 
 
 #RES=[R1y,R2y,R3y,R1z,R2z,R3z,Ay,Az,C1,C2,C3,C4,C5]
-RES = Loading.matrix_solver(Ca,La,x_1,x_2,x_3,x_a,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant_force,aero_moment_z[-1],Td[-1],DTd1,DTd2,DTd3,DTd4,FI1,FI2,FI3)
+RES = Loading.matrix_solver(Ca,J,La,x_1,x_2,x_3,x_a,theta,t_st,t_sk,t_sp,w_st,ha,Py,Pz,d1,d2,d3,G,E,Izz,Iyy,z_sc,total_resultant_force,aero_moment_z[-1],Td[-1],DTd1,DTd2,DTd3,DTd4,FI1,FI2,FI3,FI4)
 
 R1y = RES[0]
 R2y = RES[1]
@@ -410,6 +411,7 @@ C4 = RES[11]
 C5 = RES[12]
 
 
+#print([sin(theta)*(-1/(E*Izz)*1/6*(Macauley((x2-xa/2)-x1)**3)+abs(z_sc-0)*1/(G*J)*(0-z_sc)*Macaulay(x2-xa/2-x1)**1) +cos(theta)*(-ha/(2*G*J)*(0-z_sc)*Macaulay(x2-xa/2-x1)**1), sin(theta)*(-1/(E*Izz)*1/6*(Macauley(x2-xa/2-x2)**3)+ abs(z_sc-0)*1/(G*J)*(0-z_sc)*Macaulay(x2-xa/2-x2)**1)+cos(theta)*(-ha/(2*G*J)*(0-z_sc)*Macaulay(x2-xa/2-x2)**1), sin(theta)*(-1/(E*Izz)*1/6*(Macauley(x2-xa/2-x3)**3)+abs(z_sc-0)*1/(G*J)*(0-z_sc)*Macaulay(x2-xa/2-x3)**1)+ cos(theta)*(-ha/(2*G*J)*(0-z_sc)*Macaulay(x2-xa/2-x3)**1),cos(theta)*(-1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x1)**3)), cos(theta)*(-1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x2)**3)), cos(theta)*(-1/(E*Iyy)*1/6*(Macauley(x2-xa/2-x3)**3)), sin(theta)*(1/(E*Izz)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3 -abs(z_sc-0)/(G*J)*(0-z_sc+ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1) + cos(theta)*( ha/(2*G*J)*(0-z_sc+ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1), sin(theta)*(+abs(z_sc-0)/(G*J)*(ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1) +cos(theta)*(1/(E*Iyy)*1/6*Macauley(x2-xa/2-(x2-xa/2))**3-ha/(2*G*J)*(ha/2)*Macaulay(x2-xa/2-(x2-xa/2))**1), sin(theta)*(x2-xa/2),sin(theta),cos(theta)*(x2-xa/2),cos(theta),sin(theta)+cos(theta)])
 
 
 # ----------------- COMPUTE MOMENTS AND DEFLECTIONS AS A 'FUNCTION' OF X -----------------
