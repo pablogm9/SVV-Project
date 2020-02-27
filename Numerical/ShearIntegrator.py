@@ -37,10 +37,10 @@ def second_integral_circ(a,b):
     ds = (b - a)/(1e4+1)
     r = 0.0805
     s  = a + ds 
-    int_2 = [0]
-    s  = a + ds
+    int_2 = [f_circ(s)*ds*r]
+    s  = a + 2*ds
     while s < b:
-        int_2.append(f_circ(s)*ds*-r)
+        int_2.append(int_2[-1] + f_circ(s)*ds*ds*r)
         s += ds
     return sum(int_2)
 
