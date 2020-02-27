@@ -576,6 +576,49 @@ def get_shearflows(Fy, Fz):
 
 
 
+'''
+Vy = 0
+n = 0
+Izz = 4.753851442684436e-06  
+t_skin =  0.0011
+t_spar = 0.0024
+ca = 0.505
+ha = 0.161
+r = ha/2
+dz = 1e-5
+Vy = 1
+s1 = sqrt(r**2 + (ca-r)**2)
+s2 = 2*r
+ds = s1/1e3
+dtheta = pi/2/1e3
+dr = r/1e3
+A = pi*r**2/2
+x_s = (ca-r)/s1
+angle = (0.505-r)/s1
+Vz = 1
+Iyy = 4.5895702148629556e-05
+
+A_circ = r**2*pi/2
+A_triang = (ca-r)*r
+    
+for i in test_1:
+    n+=1
+    Vy += -i*dtheta*r*t_skin*sin(dtheta*n)
+n = 0
+for i in test_6:
+    Vy += i*dtheta*r*t_skin*sin(dtheta*n)
+
+for i in test_3:
+    Vy += -i*ds*t_skin*r/s1
+
+for i in test_4:
+    Vy += i*ds*t_skin*r/s1
+    
+for i in test_2:
+    Vy += -i*dr*t_spar*r/s1
+    
+print(Vy)
+'''
 
 
 
