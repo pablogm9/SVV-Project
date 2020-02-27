@@ -49,37 +49,22 @@ TE_coords = [
 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869,\
 870, 871, 872, 873, 874, 875, 936, 937, 938, 939, 940, 941]
 
-
+def deformed_coords(displacement):
+    displacement = displacement.rename(columns = {0:'label',1:'magnitude',2:'x',3:'y',4:'z'})
+    displacement['x'] = displacement['x'].astype('float')
+    displacement['y'] = displacement['y'].astype('float')
+    displacement['z'] = displacement['z'].astype('float')
+    deformation = displacement[['x', 'y', 'z']] + aileron_coords[['x', 'y', 'z']]
+    return deformation
 #Bending displacemnt
 displacement_bending = pd.read_csv('B737.rpt',skiprows=20073,nrows=6588).iloc[:,0][:6588].str.split(expand=True)[[0,1,2,3,4]]
-displacement_bending = displacement_bending.rename(columns = {0:'label',1:'magnitude',2:'x',3:'y',4:'z'})
-displacement_bending['x'] = displacement_bending['x'].astype('float')
-displacement_bending['y'] = displacement_bending['y'].astype('float')
-displacement_bending['z'] = displacement_bending['z'].astype('float')
-deformation_bending = displacement_bending[['x','y','z']] + aileron_coords[['x','y','z']]
-
+deformation_bending = deformed_coords(displacement_bending)
 #Jam Bent Displacement
 Jam_Bent_displ = pd.read_csv('B737.rpt',skiprows=26723,nrows=6588).iloc[:,0][:6588].str.split(expand=True)[[0,1,2,3,4]]
-
-Jam_Bent_displ = Jam_Bent_displ.rename(columns = {0:'label',1:'magnitude',2:'x',3:'y',4:'z'})
-Jam_Bent_displ['x'] = Jam_Bent_displ['x'].astype('float')
-Jam_Bent_displ['y'] = Jam_Bent_displ['y'].astype('float')
-Jam_Bent_displ['z'] = Jam_Bent_displ['z'].astype('float')
-Jam_Bent_deformation = Jam_Bent_displ[['x','y','z']] + aileron_coords[['x','y','z']]
-
+Jam_Bent_deformation = deformed_coords(Jam_Bent_displ)
 #Jam Straight Displacment
 Jam_Straight_displ = pd.read_csv('B737.rpt',skiprows=33373,nrows=6588 ).iloc[:,0][:6588].str.split(expand=True)[[0,1,2,3,4]]
-
-Jam_Straight_displ = Jam_Straight_displ.rename(columns = {0:'label',1:'magnitude',2:'x',3:'y',4:'z'})
-Jam_Straight_displ['x'] = Jam_Straight_displ['x'].astype('float')
-Jam_Straight_displ['y'] = Jam_Straight_displ['y'].astype('float')
-Jam_Straight_displ['z'] = Jam_Straight_displ['z'].astype('float')
-Jam_Straight_deformation = Jam_Straight_displ[['x','y','z']] + aileron_coords[['x','y','z']]
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-#
-# ax.scatter(deformations['z'],deformations['x'],deformations['y'], c = 'r', marker = 'o')
-
+Jam_Straight_deformation = deformed_coords(Jam_Straight_displ)
 
 #--------------------------------------STRESSES------------------------------------------
 def average_stress_per_rib(stress):
@@ -102,32 +87,28 @@ def average_stress_per_rib(stress):
     VMstresses_ribd['VM_AV'] = (VMstresses_ribd['Mises1']+VMstresses_ribd['Mises2'])/2
     VMstresses_ribd['S12_AV'] = (VMstresses_ribd['S121']+VMstresses_ribd['S122'])/2
     return VMstresses_riba,VMstresses_ribb,VMstresses_ribc,VMstresses_ribd
+def VM_stress_whole(R1stresses,R2stresses):
+    stress = pd.concat([R1stresses, R2stresses], ignore_index=True)
+    stress = stress.rename(columns={0: 'label', 1: 'Int', 2: 'Mises1', 3: 'Mises2', 4: 'S121', 5: 'S122'})
+    stress['label'] = stress['label'].astype('int')
+    stress['Mises1'] = stress['Mises1'].astype('float')
+    stress['Mises2'] = stress['Mises2'].astype('float')
+    stress['S121'] = stress['S121'].astype('float')
+    stress['S122'] = stress['S122'].astype('float')
+    return stress
 #--------------Bending-----------------
 
 #Bending Von Mises Stresses
 Bending_R1stresses = pd.read_csv('B737.rpt', skiprows=19,nrows=5778).iloc[:,0][:5578].str.split(expand=True)[[0,1,2,3,4,5]]
 Bending_R2stresses = pd.read_csv('B737.rpt', skiprows=5815,nrows=856).iloc[:,0][:856].str.split(expand=True)[[0,1,2,3,4,5]]
-Jam_Straight_stress =pd.concat([Bending_R1stresses,Bending_R2stresses], ignore_index= True)
-Jam_Straight_stress = Jam_Straight_stress.rename(columns = {0:'label',1:'Int',2:'Mises1',3:'Mises2',4:'S121',5:'S122'})
-Jam_Straight_stress['label'] = Jam_Straight_stress['label'].astype('int')
-Jam_Straight_stress['Mises1'] = Jam_Straight_stress['Mises1'].astype('float')
-Jam_Straight_stress['Mises2'] = Jam_Straight_stress['Mises2'].astype('float')
-Jam_Straight_stress['S121'] = Jam_Straight_stress['S121'].astype('float')
-Jam_Straight_stress['S122'] = Jam_Straight_stress['S122'].astype('float')
-Bending_VMstresses_riba,Bending_VMstresses_ribb,Bending_VMstresses_ribc,Bending_VMstresses_ribd = average_stress_per_rib(Jam_Straight_stress)
+Bending_stress = VM_stress_whole(Bending_R1stresses, Bending_R2stresses)
+Bending_VMstresses_riba,Bending_VMstresses_ribb,Bending_VMstresses_ribc,Bending_VMstresses_ribd = average_stress_per_rib(Bending_stress)
 
 #--------------Jam-Bent----------------
 #Jam-Bent Von Mises Stresses
 JamBent_R1stresses = pd.read_csv('B737.rpt', skiprows=6704,nrows=5778).iloc[:,0][:5578].str.split(expand=True)[[0,1,2,3,4,5]]
 JamBent_R2stresses = pd.read_csv('B737.rpt', skiprows=12500,nrows=856).iloc[:,0][:856].str.split(expand=True)[[0,1,2,3,4,5]]
-
-JamBent_stress =pd.concat([JamBent_R1stresses,JamBent_R2stresses], ignore_index= True)
-JamBent_stress = JamBent_stress.rename(columns = {0:'label',1:'Int',2:'Mises1',3:'Mises2',4:'S121',5:'S122'})
-JamBent_stress['label'] = JamBent_stress['label'].astype('int')
-JamBent_stress['Mises1'] = JamBent_stress['Mises1'].astype('float')
-JamBent_stress['Mises2'] = JamBent_stress['Mises2'].astype('float')
-JamBent_stress['S121'] = JamBent_stress['S121'].astype('float')
-JamBent_stress['S122'] = JamBent_stress['S122'].astype('float')
+JamBent_stress = VM_stress_whole(JamBent_R1stresses, JamBent_R2stresses)
 JamBent_VMstresses_riba,JamBent_VMstresses_ribb,JamBent_VMstresses_ribc,JamBent_VMstresses_ribd = average_stress_per_rib(JamBent_stress)
 #------------Jam-Straight-----------------------
 #Jam-Straight Von Mises Stresses
@@ -242,19 +223,19 @@ def error_calculator(Numer_model, FEM_model):
     return (FEM_model-Numer_model)/FEM_model
 
 #Bending Deformation Error
-deformation_bending['Deformation Error x'] = (deformation_bending['x']-Numer_model_def_bending['x'])/(deformation_bending['x'])
-deformation_bending['Deformation Error y'] = (deformation_bending['y']-Numer_model_def_bending['y'])/(deformation_bending['y'])
-deformation_bending['Deformation Error z'] = (deformation_bending['z']-Numer_model_def_bending['z'])/(deformation_bending['z'])
+deformation_bending['Deformation Error x'] = error_calculator(Numer_model_def_bending['x'], deformation_bending['x'])
+deformation_bending['Deformation Error y'] = error_calculator(Numer_model_def_bending['y'], deformation_bending['y'])
+deformation_bending['Deformation Error z'] = error_calculator(Numer_model_def_bending['z'], deformation_bending['z'])
 
 #JamBent Deformation Error
-Jam_Bent_deformation['Deformation Error x'] = (Jam_Bent_deformation['x']-Numer_model_def_JamBent['x'])/(Jam_Bent_deformation['x'])
-Jam_Bent_deformation['Deformation Error y'] = (Jam_Bent_deformation['y']-Numer_model_def_JamBent['y'])/(Jam_Bent_deformation['y'])
-Jam_Bent_deformation['Deformation Error z'] = (Jam_Bent_deformation['z']-Numer_model_def_JamBent['z'])/(Jam_Bent_deformation['z'])
+Jam_Bent_deformation['Deformation Error x'] = error_calculator(Numer_model_def_JamBent['x'], Jam_Bent_deformation['x'])
+Jam_Bent_deformation['Deformation Error y'] = error_calculator(Numer_model_def_JamBent['y'], Jam_Bent_deformation['y'])
+Jam_Bent_deformation['Deformation Error z'] = error_calculator(Numer_model_def_JamBent['z'], Jam_Bent_deformation['z'])
 
 #JamStraight Deformation Error
-Jam_Straight_deformation['Deformation Error x'] = (Jam_Straight_deformation['x']-Numer_model_def_JamStraight['x'])/(Jam_Straight_deformation['x'])
-Jam_Straight_deformation['Deformation Error y'] = (Jam_Straight_deformation['y']-Numer_model_def_JamStraight['y'])/(Jam_Straight_deformation['y'])
-Jam_Straight_deformation['Deformation Error z'] = (Jam_Straight_deformation['z']-Numer_model_def_JamStraight['z'])/(Jam_Straight_deformation['z'])
+Jam_Straight_deformation['Deformation Error x'] = error_calculator(Numer_model_def_JamStraight['x'], Jam_Straight_deformation['x'])
+Jam_Straight_deformation['Deformation Error y'] = error_calculator(Numer_model_def_JamStraight['y'], Jam_Straight_deformation['y'])
+Jam_Straight_deformation['Deformation Error z'] = error_calculator(Numer_model_def_JamStraight['z'], Jam_Straight_deformation['z'])
 
 
 #--------------------------------------STRESS ERROR---------------------------------------
