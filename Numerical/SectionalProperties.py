@@ -187,7 +187,7 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
         s += ds
     plt.pyplot.plot(s_tot, shears)
     """
-    qs0_circ = -(( itg.second_integral_circ(0, pi/2) /t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
+    qs0_circ = -((itg.second_integral_circ(0, pi/2)/t_skin - itg.second_integral_spar(0, r)/t_spar + itg.second_integral_circ(-pi/2, 0)/t_skin) - itg.second_integral_spar2(0, r)/t_spar - qb2(r)*r/t_spar +qb1(pi/2)*pi*r/2/t_skin)*(pi*r/t_skin + 2*r/t_spar)**-1
     qs0_triang = -(itg.second_integral_triang(0, s1) + itg.second_integral_triang2(0, s1) + itg.second_integral_spar(0, r) + itg.second_integral_spar2(0, r) + (qb1(pi/2) + qb2(r))*s1/t_skin + qb3(s1)*s1/t_skin + qb2(r)*r/t_spar)*(2*s1/t_skin + 2*r/t_spar)**-1
     
     
@@ -268,10 +268,9 @@ def get_SC(t_skin,t_spar,ha,ca,Izz):
     #plt.pyplot.plot(thetas4, shears4)
     
     ksi = 0
-    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)
-    ksi += r*(ca-r)/-s1*sum(shears4)/len(shears4)
-    ksi += r*sum(shears1)/len(shears1)*pi*r/2  
-    ksi += r*sum(shears6)/len(shears6)*pi*r/2 
+    ksi += r*(ca-r)/s1*sum(shears3)/len(shears3)*s1
+    ksi += r*(ca-r)/-s1*sum(shears4)/len(shears4)*s1
+    ksi += r*sum(shears1)/len(shears1)*pi*r  
     return ksi
     
     
