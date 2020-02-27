@@ -4,9 +4,6 @@ Created on Tue Feb 25 16:11:48 2020
 
 @author: Marni
 """
-import numpy as np
-from math import *
-
 r = 0.0805
 ca = 0.505
 t_skin = 0.0011
@@ -25,7 +22,7 @@ def f_circ(s):
     return -t_skin*Vy/Izz*(r**2*sin(s))
 
 def integral_circ(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -34,11 +31,11 @@ def integral_circ(a, b):
     return sum(int_1)
 
 def second_integral_circ(a,b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     r = 0.0805
     s  = a + ds 
-    int_2 = [f_circ(s)*ds*r]
-    s  = a + 2*ds
+    int_2 = [f_circ(s)*ds*ds*r]
+    s  = a + ds
     while s < b:
         int_2.append(int_2[-1] + f_circ(s)*ds*ds*r)
         s += ds
@@ -53,7 +50,7 @@ def f_triang(s):
     return -t_skin*Vy/Izz*(r-(r/s1)*s)
 
 def integral_triang(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -62,7 +59,7 @@ def integral_triang(a, b):
     return sum(int_1)
 
 def second_integral_triang(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s = a + ds
     int_2 = [f_triang(s)*ds*ds]
@@ -80,7 +77,7 @@ def f_triang2(s):
     return -t_skin*Vy/Izz*-(r/s1)*s
 
 def integral_triang2(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -89,7 +86,7 @@ def integral_triang2(a, b):
     return sum(int_1)
 
 def second_integral_triang2(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     s  = a + ds
     int_2 = [f_triang2(s)*ds**2]
     s  = a + 2*ds
@@ -105,7 +102,7 @@ def f_spar(s):
     return -t_spar*Vy/Izz*s
 
 def integral_spar(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -114,7 +111,7 @@ def integral_spar(a, b):
     return sum(int_1)
 
 def second_integral_spar(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     s  = a + ds
     int_2 = [f_spar(s)*ds**2]
     s  = a + 2*ds
@@ -130,7 +127,7 @@ def f_spar2(s):
     return -t_spar*Vy/Izz*(-r+s)
 
 def integral_spar2(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -139,7 +136,7 @@ def integral_spar2(a, b):
     return sum(int_1)
 
 def second_integral_spar2(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     s  = a + ds
     int_2 = [(f_spar2(s)*ds)*ds]
     s  = a + 2*ds
@@ -164,7 +161,7 @@ def f_circ_z(s):
     return -t_skin*Vz/Iyy*(r**2*cos(s))
 
 def integral_circ_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -173,13 +170,13 @@ def integral_circ_z(a, b):
     return sum(int_1)
 
 def second_integral_circ_z(a,b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     r = 0.0805
     s  = a + ds 
-    int_2 = [0]
+    int_2 = [f_circ_z(s)*ds*ds*r]
     s  = a + ds
     while s < b:
-        int_2.append(f_circ_z(s)*ds*-r)
+        int_2.append(int_2[-1] + f_circ_z(s)*ds*ds*r)
         s += ds
     return sum(int_2)
 
@@ -191,7 +188,7 @@ def f_triang_z(s):
     return -t_skin*Vz/Iyy*-(ca-r)/s1*s
 
 def integral_triang_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -200,7 +197,7 @@ def integral_triang_z(a, b):
     return sum(int_1)
 
 def second_integral_triang_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s = a + ds
     int_2 = [f_triang_z(s)*ds*ds]
@@ -218,7 +215,7 @@ def f_triang2_z(s):
     return -t_skin*Vz/Iyy*(-(ca-r) + (ca-r)/s1*s)
 
 def integral_triang2_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -227,7 +224,7 @@ def integral_triang2_z(a, b):
     return sum(int_1)
 
 def second_integral_triang2_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     s  = a + ds
     int_2 = [f_triang2_z(s)*ds**2]
     s  = a + 2*ds
@@ -243,7 +240,7 @@ def f_spar_z(s):
     return -t_spar*Vz/Iyy
 
 def integral_spar_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -268,7 +265,7 @@ def f_spar2_z(s):
     return -t_spar*Vz/Iyy
 
 def integral_spar2_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     int_1 = []
     s  = a + ds
     while s < b:
@@ -277,7 +274,7 @@ def integral_spar2_z(a, b):
     return sum(int_1)
 
 def second_integral_spar2_z(a, b):
-    ds = (b - a)/(1e4+1)
+    ds = (b - a)/(1e3+1)
     s  = a + ds
     int_2 = [f_spar2_z(s)*ds**2]
     s  = a + 2*ds
