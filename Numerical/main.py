@@ -272,59 +272,34 @@ for i in range(new_aerodata.shape[1]):
     
 #-----------------------------------------
 
-AAtot_test = La*Ca*np.mean(new_aerodata)
-AAtot_test1 = np.sum(aero_loads)
-AAsummed = []
-for i in aero_loads:
-    AAsummed.append(sum(i))
-spacing_span = La/1241  
-spacing_span = new_nodes_x[1:]-new_nodes_x[:-1]
-spacing_span  = np.insert(spacing_span,0,new_nodes_x[0])  
-loading = spacing_span*spacing_span*new_aerodata[0][:]
-print(loading[0])
-  
-
-
-print('% error for summation of loads 2.0' )
-print(min((loading[0]-aero_loads[0])/loading[0]))
-def summation_error(aero_loads, resultant_forces):
-    to_return = (sum(resultant_forces)-np.sum(aero_loads))/np.sum(aero_loads)
-    return to_return
-print('% error for summation of loads')
-def magnitude_check(new_aerodata,aero_loads):
-    return (1.611*0.505*np.mean(new_aerodata)/np.sum(aero_loads)) < 1
-print('% error for the forces across the aileron')
-print((AAtot_test-AAtot_test1)/AAtot_test)
-
-
-AAsum_res = sum(resultant_forces)
-
-aero_loads1 = zip(*reversed(aero_loads))
-AAsummedspan = []
-for k in aero_loads1:
-    AAsummedspan.append(sum(k))
-
-print('this is the verification for the sum of the span wise points')
-fig = plt.figure()
-plt.title('Chord wise summation of forces')
-plt.ylabel('Newtons')
-plt.xlabel('Meters')
-plt.plot(new_nodes_z,AAsummed)
-plt.show()
-print('same as above but for the chord')
-plt.figure()
-plt.title('Span wise summation of forces')
-plt.ylabel('Newtons')
-plt.xlabel('Meters')
-plt.plot(new_nodes_x,AAsummedspan)
-plt.show()
-
-
 '''
 
 # ----------------- PLOT COUNTOUR MAP AND 3D SURFACE OF INTERPOLATED DATA ----------------- 
 
+X, Z = np.meshgrid(new_nodes_x,new_nodes_z)
+Y = new_aerodata/1000
 
+# 2D Countour Plot
+plt.figure()
+countour_plot = plt.contourf(X,Z,Y)
+plt.colorbar(countour_plot)
+
+plt.title('Contour plot of interpolated aerodynamic loading distribution [kPa]',pad=10)
+plt.xlabel('X axis (Spanwise direction)')
+plt.ylabel('Z axis (Chordwise direction)')
+plt.show()
+
+
+# 3D Surface Plot
+ax = plt.axes(projection='3d')
+ax.plot_surface(X,Z,Y,cmap='plasma')
+ax.set_title('Interpolated aerodynamic distribution [kPa]', pad=20)
+
+#fontname='AppleGothic'
+plt.xlabel('X-axis (Spanwise direction)', labelpad=10)
+plt.ylabel('Z-axis (Chordwise direction)', labelpad=10)
+
+plt.show()
 
 
 
