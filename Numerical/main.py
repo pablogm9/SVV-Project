@@ -492,8 +492,8 @@ top_y = top[1]
 bottom_z = bottom[0]
 bottom_y = bottom[1]
 
-crosssection_z = np.array([circle_1_z,spar_1_z,top_z,bottom_z,spar_2_z,circle_2_z])
-crosssection_y = np.array([circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,circle_2_y])
+crosssection_z = np.concatenate((circle_1_z,spar_1_z,top_z,bottom_z,spar_2_z,circle_2_z))
+crosssection_y = np.concatenate((circle_1_y,spar_1_y,top_y,bottom_y,spar_2_y,circle_2_y))
 
 
 # Get shear flows due to shear forcesat each points
@@ -599,8 +599,8 @@ for i in range(new_aerodata.shape[1]):
     
     # ------- VON MISES STRESSES -------
     
-    for i in range(len(crosssection_z)):
-        vm = sqrt((normal_stresses_crosssection[i] ** 2) * (3*(shear_stresses_crosssection[i] ** 2)))
+    for j in range(len(crosssection_z)):
+        vm = sqrt((normal_stresses_crosssection[j] ** 2) * (3*(shear_stresses_crosssection[j] ** 2)))
         vm_stresses_crosssection = np.append(vm_stresses_crosssection,vm)
         
         
