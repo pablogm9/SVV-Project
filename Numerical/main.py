@@ -622,31 +622,103 @@ print('Complete.'+'\n\n'+'Runtime: %f seconds\n' % (time.time()-start_time))
 
 # ----------------- PLOT CROSS-SECTION -----------------
 
+shear_stresses[0+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[1000+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[2000+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[3000+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[4000+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[5000+ 463*6000] = min(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[1999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[2999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[3999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[4999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+shear_stresses[5999+ 463*6000] = max(shear_stresses[463*6000:464*6000+1])
+
+
+# ----------------- PLOT CROSS-SECTION -----------------
 # Cross section
-plt.scatter(circle_1_z,circle_1_y, c = q_circle1 + Td[385]/t_sp/2/A_circ, cmap = 'jet', linewidth = 0.5)
-plt.scatter(circle_2_z,circle_2_y,c = q_circle2 + Td[385]/t_sp/2/A_circ, cmap = 'jet', linewidth = 0.5)
-plt.scatter(spar_1_z,spar_1_y,c = q_spar1 + Td[385]/t_sp/2/A_circ + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
-plt.scatter(spar_2_z,spar_2_y,c = q_spar2 + Td[385]/t_sp/2/A_circ + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
-plt.scatter(top_z,top_y,c = q_top + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
-plt.scatter(bottom_z,bottom_y,c = q_bottom + Td[385]/t_sp/2/A_triang, cmap = 'jet', linewidth = 0.5)
-
-
+plt.figure(1)
+plt.scatter(circle_1_z,circle_1_y, s = 0.7, c = (shear_stresses[463*6000:1000+ 463*6000]), cmap = 'jet')
+plt.scatter(circle_2_z,circle_2_y, s = 0.7,c = (shear_stresses[5000+ 463*6000:6000+ 463*6000]), cmap = 'jet')
+plt.scatter(spar_1_z,spar_1_y, s = 0.7,c = (shear_stresses[1000+ 463*6000:2000+ 463*6000]), cmap = 'jet')
+plt.scatter(spar_2_z,spar_2_y, s = 0.7,c = (shear_stresses[4000+ 463*6000:5000+ 463*6000]), cmap = 'jet')
+plt.scatter(top_z,top_y, s = 0.7,c = (shear_stresses[2000+ 463*6000:3000+ 463*6000]), cmap = 'jet')
+plt.scatter(bottom_z,bottom_y, s = 0.7,c = (shear_stresses[3000+ 463*6000:4000+ 463*6000]), cmap = 'jet')
 # Plot origin
 plt.plot(0,0,'k.')
+# Plot axes`
+plt.axhline(0,linestyle='dashed',color='black',linewidth=1) # x = 0
+plt.axvline(0,linestyle='dashed',color='black',linewidth=1) # y = 0
+# Plot heatmap of von mises stress
+# Set ranges for axes and show plot
+plt.xlim(0.1,-0.45)
+plt.ylim(-0.085,0.085)
+plt.show()
 
+normal_stresses[0+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[1000+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[2000+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[3000+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[4000+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[5000+ 463*6000] = min(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[1999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[2999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[3999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[4999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+normal_stresses[5999+ 463*6000] = max(normal_stresses[463*6000:464*6000+1])
+
+
+plt.figure(2)
+plt.scatter(circle_1_z,circle_1_y, s = 0.7, c = (normal_stresses[463*6000:1000+ 463*6000]), cmap = 'jet')
+plt.scatter(circle_2_z,circle_2_y, s = 0.7,c = (normal_stresses[5000+ 463*6000:6000+ 463*6000]), cmap = 'jet')
+plt.scatter(spar_1_z,spar_1_y, s = 0.7,c = (normal_stresses[1000+ 463*6000:2000+ 463*6000]), cmap = 'jet')
+plt.scatter(spar_2_z,spar_2_y, s = 0.7,c = (normal_stresses[4000+ 463*6000:5000+ 463*6000]), cmap = 'jet')
+plt.scatter(top_z,top_y, s = 0.7,c = (normal_stresses[2000+ 463*6000:3000+ 463*6000]), cmap = 'jet')
+plt.scatter(bottom_z,bottom_y, s = 0.7,c = (normal_stresses[3000+ 463*6000:4000+ 463*6000]), cmap = 'jet')
+# Plot origin
+plt.plot(0,0,'k.')
 # Plot axes
 plt.axhline(0,linestyle='dashed',color='black',linewidth=1) # x = 0
 plt.axvline(0,linestyle='dashed',color='black',linewidth=1) # y = 0
-
-
 # Plot heatmap of von mises stress
-
-
-
 # Set ranges for axes and show plot
 plt.xlim(0.1,-0.45)
-plt.ylim(-0.1,0.1)
+plt.ylim(-0.085,0.085)
 plt.show()
+
+ab, abc, abcd, abcde, abdef, abdefg = section.get_shearflows(S_y[463],S_z[463])
+print(max(ab))
+print(max(abc))
+print(max(abcd))
+print(max(abcde))
+print(max(abdef))
+print(max(abdefg))
+
+
 '''
 
 
