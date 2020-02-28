@@ -29,7 +29,6 @@ ylist = [0.0]
 
 # Coordinates for Triangle Stiffeners (Positive)
 alpha = arctan(r/(ca-r))
-print(alpha)
 for i in range(4):
     ztriangle = - ca + r + space_st * (1/2 + i) * cos(alpha)
     ytriangle = space_st * (1/2 + i) * sin(alpha)
@@ -37,10 +36,12 @@ for i in range(4):
     ylist.append(ytriangle)
 
 # Coordinates for Circle Stiffeners
+i = -1
 beta = space_st/r
+print(beta)
 while beta < pi/2:
-    zcircle = r * cos(beta)
-    ycircle = r * sin(beta)
+    zcircle = r * cos(i*beta)
+    ycircle = r * sin(i*beta)
     
     beta = beta + space_st/r
     
@@ -48,6 +49,9 @@ while beta < pi/2:
     ylist.append(ycircle)
     zlist.append(zcircle)
     ylist.append(-ycircle)
+    
+    i = i + 1
+    print(i)
 
 # Coordinates for Triangle Stiffeners (Negative)
 for i in range(4):
@@ -60,7 +64,7 @@ for i in range(4):
 A1 = t_sp * ha
 A23 = t_sk * a
 A4 = pi * r * t_sk
-Atot = A1 + 2 * A23 + A4 + 11 * A_st
+Atot = A1 + 2 * A23 + A4 + nstiff * A_st
 zlistcentr = []
 for i in zlist:
     zcoordst = A_st * (i)
@@ -115,5 +119,6 @@ Iyy_cs = Iyy_1 + 2 * Iyy_23 + Iyy_4
 Izz = Izz_stot + Izz_cs # in m^4
 Iyy = Iyy_stot + Iyy_cs # in m^4
 print(zlist)
+print(ylist)
 print(zcoord)
 print(Izz,Iyy)
